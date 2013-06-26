@@ -61,7 +61,7 @@ c
       integer nx(MCMD),ny(MCMD)
       real dbinx,dbiny,xmin(MCMD),ymin(MCMD)
       common /c_crowd/ dbinx,dbiny,nx,ny,xmin,ymin
-
+      
       real emin,emax,epix
       common /c_chist/ emin,emax,epix
 
@@ -231,9 +231,11 @@ c *** Miscellaneous ***
             call axes(starmag,x,y)
             
             ! Add photometric scatter 
-            if ( err_method .eq. 1 ) then
+            if ( err_method .eq. 2 ) then
+               call scatter( x, y, idrop )
+            else if ( err_method .eq. 1 ) then
                call fakecrowd( x, y, idrop )
-            else
+            else 
                call crowd( x, y, idrop )
             endif
 
