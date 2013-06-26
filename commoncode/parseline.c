@@ -18,6 +18,8 @@
 //
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
+
 extern void getreal_( const char* string, float* f, int n ) {
   sscanf( string, "%f", f );
 }
@@ -37,7 +39,7 @@ extern void getword_( const char* instring, char* outstring, int *outlen, int n1
 
   for ( i = 0; i < *outlen; i++ ) {
     if ( iStart == -1 ) {
-      if ( instring[i] != ' ' ) {
+      if ( ! isspace( instring[i] ) ) {
 	iStart = i;
 	if ( instring[i] != 0 ) 
 	  outstring[i-iStart] = instring[i]; //skip leading whitespace
@@ -45,7 +47,7 @@ extern void getword_( const char* instring, char* outstring, int *outlen, int n1
 	  break;
       }
     } else {
-      if ( instring[i] != ' ' && instring != 0 ) 
+      if ( ! isspace( instring[i] ) && instring[i] != 0 ) 
 	outstring[i-iStart] = instring[i]; //skip leading whitespace
       else 
 	break;
