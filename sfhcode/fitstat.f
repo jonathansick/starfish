@@ -59,8 +59,8 @@ c     ***                                               ***
          iflag = 1              
          
          do icmd=1,ncmd
-            numx(icmd) = int((xhi(icmd) - xlo(icmd))/dpix) + 1
-            numy(icmd) = int((yhi(icmd) - ylo(icmd))/dpix) + 1
+            numx(icmd) = nint((xhi(icmd) - xlo(icmd))/dpix)
+            numy(icmd) = nint((yhi(icmd) - ylo(icmd))/dpix)
             ngridx(icmd) = numx(icmd)/npix 
          end do
 
