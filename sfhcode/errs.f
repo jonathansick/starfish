@@ -1,4 +1,4 @@
-      subroutine errs(x,y,yerr,n,stepsize,ppos,pneg)
+      subroutine errs(x,y,yerr,n,stepsize0,ppos,pneg)
 
 c     This file is part of StarFISH
 c     (C) 2004 by Jason Harris  <jharris@as.arizona.edu>
@@ -22,7 +22,7 @@ C
       double precision x(MP),xtry(MP),xold(MP),xtest,xsum
       double precision y,ytry,yold,yerr,dy
       double precision updown(2)
-      real stepsize
+      real stepsize0, stepsize
 
       integer np
       common /cnp/ np
@@ -48,6 +48,7 @@ c     First, compute the uncorrelated confidence interval on each amplitude:
             ytry = y
             
 c        step in this dir. until (ytry.gt.yerr)
+            stepsize = stepsize0
  2          yold = ytry
             do k=1,np
                xold(k) = xtry(k)
@@ -56,6 +57,12 @@ c        step in this dir. until (ytry.gt.yerr)
             call step(xtry,pdir,stepsize,1)
             call fitstat(xtry,ytry,0)
             if (xtry(j).eq.0.0) ytry = yerr 
+
+            !! If the last step moved us less than 5% toward 
+            !! our goal, then increase the stepsize
+            if ( (ytry-yold)/(yerr-y) .lt. 0.05 ) then
+               stepsize = stepsize * 2
+            endif
 
             istep = istep + 1
             if (ytry.lt.yerr) goto 2
@@ -95,6 +102,7 @@ c     negative complement.
             ytry = y
             
 c        step in this dir. until (ytry.gt.yerr)
+            stepsize = stepsize0
  3          yold = ytry
             do k=1,np
                xold(k) = xtry(k)
@@ -104,8 +112,14 @@ c        step in this dir. until (ytry.gt.yerr)
             call fitstat(xtry,ytry,0)
             if (xtry(j).le.0.0) ytry = yerr 
 
+            !! If the last step moved us less than 5% toward 
+            !! our goal, then increase the stepsize
+            if ( (ytry-yold)/(yerr-y) .lt. 0.05 ) then
+               stepsize = stepsize * 2
+            endif
+
             istep = istep + 1
-			if (istep.gt.100) write(*,*) istep,ytry,yerr
+            if (istep.gt.100) write(*,*) istep,ytry,yerr,stepsize
             if (ytry.lt.yerr) goto 3
          
 c        xold was the last location below yerr.  Do a linear interpolation 
@@ -198,6 +212,7 @@ c     random parameter directions.
          ytry = y
 
 c        step in this dir. until (ytry.gt.yerr)
+         stepsize = stepsize0
  10      yold = ytry
          do j=1,np
             xold(j) = xtry(j)
@@ -205,6 +220,13 @@ c        step in this dir. until (ytry.gt.yerr)
 
          call step(xtry,pdir,stepsize,1)
          call fitstat(xtry,ytry,0)
+         
+         !! If the last step moved us less than 5% toward 
+         !! our goal, then increase the stepsize
+         if ( (ytry-yold)/(yerr-y) .lt. 0.05 ) then
+            stepsize = stepsize * 2
+         endif
+
          istep = istep + 1
          if (ytry.lt.yerr) goto 10
 
