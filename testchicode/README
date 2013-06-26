@@ -1,0 +1,36 @@
+  Testchi:  quick computation of the fit statistic 
+            for a single model.
+--------------------------------------------------
+
+Testchi provides a simple frontend to the fitstat.f subroutine, which
+calculates the fitting statistic (e.g., chi-squared) of a given model 
+SFH.  You can adjust any of the inputs to testchi and run it to see 
+immediately the effect on the model fit.
+
+To compile testchi, just type 'make' in the testchi directory.  This will
+place the executable program in the main SFH-1.1 directory, which is 
+where you should run it.
+
+To use testchi, adjust the parameters in the testchi input file, and 
+run the program:
+
+% ./testchi < input/testchi.dat
+
+The fitting statistic value resulting from the comparison of the data 
+and the model is printed to the screen, and the gridbox populations are 
+written to the "chifile", for a more detailed investigation of the fit
+(see the "grid" directory).  
+
+The parameters that can be adjusted are quite numerous, but here are 
+a few interesting possibilities:
+
++ modify the SFH model amplitudes
+
++ mask out a region of the CMD to see how it affects the fit.
+
++ apply a color shift to the data
+
++ use a different fit statistic
+
++ use a different synthetic CMD library
+

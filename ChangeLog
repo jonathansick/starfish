@@ -1,0 +1,76 @@
+Changes for version 1.10:
+
++ Fixed periodicity in random-number generator, which resulted in noisy
+  synthetic CMDs.  Now using "dprand" function by  N. M. Maclaren
+
++ Added option to use Poisson fit statistic instead of chi^2
+
++ since the "chi" subroutine has been generalized to handle three 
+  different fit statistics, renamed it to "fitstat"
+
++ cleaned up common-blocks
+
++ added parameter documentation to include files
+
++ Improved photometric-error modeling in synth.  Now properly includes
+  covariance between color and magnitude errors.
+
++ Make parsing of input and data files more robust.
+
++ New empirical isochrone-interpolation program.
+
++ moved code used in all three programs (sfh, synth, mklib) to
+  "commoncode" directory
+
++ Write current best solution to logfile more often
+
++ The sfh.sm plotting script is substantially easier to use.
+
+
+Changes for version 1.06:
+
++ Changed some real variables in synthcode to double precision.
+  This was necessary to avoid roundoff errs in the calculation of
+  occupatin probabilities.
+
++ Removed a kludge in sfhcode/chi.f that ignored empty data boxes.  
+  Of course, empty boxes carry information too, so they should not be 
+  ignored in calculating chi**2.
+
++ Tweaked param values in synth.h and sfh.h
+
++ Testpop: added option to use SFRs in input file, instead of number of 
+  stars per bin.
+
++ Testpop: can now read SFH amplitudes with values >10.0 (this was precluded
+  by a restrictive format statement).
+
++ Added alternate versions of synth and testpop that uses analytical error
+  model rather than one derived from artificial star tests.
+
++ Updated manual
+
+
+Changes for version 1.05:
+
++ Updated Isochrone tables to latest from the Padua group.  The newer 
+isochrones feature higher age resolution, and the z=0.004 tracks extend
+as young as log(t)=6.6.
+
++ Makefiles moved to code directories.  Now you can just run 
+"make" in each of the (libcode, synthcode, sfhcode) directories, and the 
+*.o object files won't pollute the main SFH directory.
+
++ Input files specified on command line.  
+Invoke programs with (e.g.) "./sfh < input/sfh.dat"
+This way, input files can be easily archived for each run.  Also, this
+change means that the programs can now be run from any directory.
+
++ Removed z=0.006 isochrones from examples, since they weren't used 
+everywhere.
+
++ made test.cmds consistent with iso.dat (z=0.004 goes as young as 
+log(t)=6.6 instead of 8.0)
+
++ made MSTO mags in input/iso.dat absolute mags, so they don't need to be 
+hand-adjusted to match data at different distances.

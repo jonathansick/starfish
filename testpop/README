@@ -1,0 +1,58 @@
+  Testpop:  Generate artificial stellar photometry based on 
+            input SFH amplitudes.
+-----------------------------------------------------------
+
+Testpop constructs artificial stellar photometry based on a user-specified  
+star formation history.  It uses the same code as the 'synth' program
+to generate the photometry from isochrones.
+
+Testpop requires two input files: its own version of the synth input file 
+(which must be named "synth.dat", and reside in the testpop directory), 
+and the testpop input file (which can be named anything, and is specified 
+on the command line).  Build testpop by typing "make" in the testpop 
+directory.  Run it like this:
+
+% testpop < name_of_input_file
+
+There is now an alternate version of testpop that will use an analytic
+error model instead of reading an artificial stars test table.  To build 
+this version, type "make -f Makefile.fake" in the testpop directory.
+The executable is called "testpop2".
+
+There is an example input file in the testpop directory (input.example).
+The testpop input file should contain an 8-line header, followed by 
+the list of SFH amplitudes.  The 8 parameters in the header are:
+
+pre:         filename prefix for output photometry files (up to 8 chars)
+lockflag:    1: lock isochrones into groups using synth.dat's lockfile 
+nstars:      an amp of 1.0 will produce nstars objects.
+dmod:        delta-distance modulus.  For adjusting the DM of the isochrones.
+fext:        extinction multiplier for tweaking extinction.
+gamma:       IMF slope (testpop recalculates occupation probabilities)
+fbinary:     Binary fraction
+sfrflag:     1: amps are SF rates (Msun/Gyr); 0: amps are Nstars/age-bin
+
+The values for gamma and fbinary supercede the values in synth.dat.
+Immediately following these 8 parameters, the input file should contain 
+N lines with the following columns:
+
+(1x), amp (f7.4), (2x), z_metal (f5.3), (2x), log_age (f5.2), (2x), niso (i2)
+
+You should have one line per isochrone in the isofile (if lockflag=0), 
+or one for each independent isochrone group (if lockflag=1).  amp is the 
+desired amplitude for each isochrone/isochrone group.  If sfrflag=1, 
+then the amps will be taken as star formation rates, with units Msun/Gyr.
+Otherwise, they are simply Nstars per age bin.  niso is the number of 
+isochrones in the group (if lockflag=0, then niso is not read).
+
+Testpop will create NN(i) = (amplitude(i) * nstars) stars per isochrone.
+Be aware that many of the stars will be undetectable, so the final number 
+of stars output will be smaller than you might expect. 
+
+Testpop outputs ncmd output photometry files, each containing the following 
+data:
+
+x_mag,  y_mag, x_err, y_err
+
+These files may be used as input data to the sfh program.
+

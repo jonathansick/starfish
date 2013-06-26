@@ -1,0 +1,41 @@
+  mkimages.sh:  Script to generate CMD images 
+                from the SFH solution
+---------------------------------------------
+
+The mkimages.sh script generates images of each CMD and creates an 
+HTML document that displays these images.  This is very useful
+for examining the quality-of-fit of a particular model, and for 
+diagnosing any problems in the fit.
+
+The images are generated from the data in the chifile output by
+sfh. The chifile contains the following columns:
+icmd, ibox, Nmod, Ndat, c
+
+where icmd identifies the CMD, ibox identifies the box within the CMD, 
+Nmod is the number of model stars in that box, Ndat is the number of data 
+stars, and c is that box's contribution to the chi**2 sum.
+
+gridN.index:
+------------
+Before running mkimages.sh you need to generate a gridN.index file
+for each CMD.  The columns are:
+ix, iy, ibox
+
+ix, iy are the pixel coordinates, and ibox is the box to which that pixel 
+belongs.  
+
+StarFISH ships with default index files for the test setup (grid1.index, 
+grid2.index, grid3.index), but you will probably have to construct 
+new gridN.index files for your own CMDs.  You can modify mkgrid.f to 
+generate the files.
+
+
+Once you have gridN.index files, open the script in a text editor and 
+modify the parameters at the top of the file to suit your needs.
+Then run the script like this:
+
+% ./mkimages.sh <output_file_prefix> <chifile>
+
+(e.g., './mkimages.sh c1978 ../output/c1978.chi')
+
+

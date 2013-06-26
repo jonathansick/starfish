@@ -1,0 +1,161 @@
+sfh	2
+	define TeX_strings 1
+        ctype = ctype() concat 150 + 256*(150 + 256*150)
+        ctype = ctype(STRING) concat 'grey'
+
+###################################
+## Begin Customization section
+##
+## Set "0" for screen output; "1" for PostScript output
+	define out_type 0
+##
+## avgmass is the average stellar mass (1.628 for Salpeter IMF)
+	define avgmass 1.628
+##
+## Set the range of log(age) to cover in the plot
+	define tmin  6.4
+	define tmax 10.3
+## 
+## Set the number of metallicity panels:
+	define nz 3
+##
+## Set the data limits for each panel in the plot.
+## Here we just initialize the vectors, they are set below.
+	set iz=1,$nz   
+	set y_min=iz  
+	set y_max=iz  
+	set x_lab=iz  
+	set y_lab=iz  
+	set l_min=iz  
+	set l_max=iz  
+	set w_min=iz  
+	set w_max=iz  
+	set zz=iz     
+##
+##	Set the metallicity for each panel here:
+	set zz[0]=0.001
+	set zz[1]=0.004
+	set zz[2]=0.008
+##
+##	Set the label string for each metallicity
+##	(in a space-separated list)
+	set labstring= { Z=0.001 Z=0.004 Z=0.008 }
+##
+## The y-axis tick labels will be multiplied by 10**pow to save space
+	define pow    -4
+##
+## By default, the limits are the same for each panel,
+## but it can be useful to adjust them independently.
+	define h0 5000
+	define h $(int((31000 - $h0)/$nz))  #height of a panel in pixels
+	foreach j iz {
+		set y_min[$j-1]=-0.00009
+		set y_max[$j-1]= 0.00038
+		set l_min[$j-1]=$(y_min[$j-1])/10**$pow
+		set l_max[$j-1]=$(y_max[$j-1])/10**$pow
+		set x_lab[$j-1]=8.4
+		set y_lab[$j-1]=$(0.66*y_max[$j-1])
+		set w_min[$j-1]=$h0 + ($j-1)*$h
+		set w_max[$j-1]=$h0 + $j*$h
+	}
+##
+## End Customization section
+######################################
+
+	if ( $out_type==0 ) {
+	 	dev x11 -bg black
+	} else {
+		dev postfile $1.sfh.eps
+	}
+
+	data $1.dat
+	read z 1
+	read t 2
+	read a 3
+	read an 4
+	read ap 5
+
+##	Read the number of stars in the data CMD
+	cd ../data
+	data $2.bv
+	read junk 1
+	define nstars (DIMEN(junk))
+	
+##	Read the time interval covered by each SFH bin
+	cd ../input
+	data dtime.dat
+	read dt 3
+
+	cd ../output
+
+##	Amps in the SFH file have units Nstars.
+##	Renormalize to SFR (Msun/yr)
+	set ep = (ap-a)*$avgmass/dt
+	set en = (a-an)*$avgmass/dt
+	set a = a*$avgmass/dt
+
+##	Include Poisson errors in errorbars
+	define snstars $(sqrt($nstars))
+	set foo=a*sqrt(($snstars/$nstars)**2)
+	set sap = ep + foo
+	set san = en + foo
+
+##	Truncate the lower errorbars if they extend below zero.
+	set i0=1,$(DIMEN(a))
+	foreach j i0 {
+		if (san[$j-1]>a[$j-1]) { set san[$j-1]=a[$j-1] }
+	}
+
+#####
+##	Finally!  Begin the actual plotting.
+
+##	Global stuff; axes labels
+	expand 2
+	lweight 3
+	location 3500 31000 3500 31000
+	xlabel log(age)
+	ylabel M_{\odot}/yr * 10^{$pow}
+		
+##	Plot the metallicity panels
+	foreach j iz {
+##		Isolate values for this metallicity
+		set t1=t if( abs(z-$(zz[$j-1])) < 0.000001 )
+		set a1=a if( abs(z-$(zz[$j-1])) < 0.000001 )
+		set sap1=sap if( abs(z-$(zz[$j-1])) < 0.000001 )
+		set san1=san if( abs(z-$(zz[$j-1])) < 0.000001 )
+
+##		Set the panel geometry
+		location 5000 $gx2 $(w_min[$j-1]) $(w_max[$j-1])
+		lim $tmin $tmax $(y_min[$j-1]) $(y_max[$j-1])
+
+##		Draw the errorbars
+		ctype grey
+		errorbar t1 a1 sap1 2
+		errorbar t1 a1 san1 4
+		ctype default
+
+##		Draw the histogram
+		hist t1 a1
+
+##		Draw the metallicity label
+		expand 1.5
+		relocate $(x_lab[$j-1]) $(y_lab[$j-1])
+		label $(labstring[$j-1])
+		expand 2
+
+##		Draw the box
+		lim $tmin $tmax $(l_min[$j-1]) $(l_max[$j-1])
+		if ( $j==1 ) {
+			box 
+		} else {
+			box 0 2
+		}
+	}
+
+	if ( $out_type==1 ) {
+		hardcopy
+	}
+#
+#
+#  Usage: sfh <outprefix> <datprefix>
+#

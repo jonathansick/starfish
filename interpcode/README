@@ -1,0 +1,67 @@
+Using geteep and interp:
+
+To compile, cd to the interpcode directory and type 'make'.  This will
+create geteep and interp programs in the root SFH-1.1 directory.
+
+Run geteep and interp from the command line in the usual way, specifying
+the input file as STDIN:
+
+% ./geteep < input/geteep.dat
+% ./interp < input/interp.dat
+
+geteep identifies and labels "empirical EEPs" in a list of isochrones 
+given as input.  An empirical EEP is just a point along the isochrone
+where either the color or the magnitude is a minimum or a maximum.
+
+The geteep.dat input file has two lines at the top, which identify 
+the number of magnitudes present in the isochrones and the magnitude
+ID that should be used as the Y-axis (the X-axis is automatically
+mag(i-1) - mag(i) ).  The rest of the file is the list of isochrones
+that should be processed, and the corresponding output files.  The 
+filenames can be any length up to 40 characters.  There is no strict 
+column format; just separate the two filenames with whitespace.
+
+Geteep expects standard StarFISH isochrone files:
+(mass, mag1, mag2, ..., magN).  The output files will be the same, 
+except there will be an integer column at the end which identifies
+the EEP type of the isochrone point:
+0 = not an EEP
+1 = color minimum
+2 = color maximum
+3 = mag minimum
+4 = mag maximum
+
+Once you have run geteep to identify and label the EEPs, you can run interp 
+to interpolate between existing isochrones.  The interp.dat input file
+has one header line at the top which identifies the Y-axis magnitude, 
+the number of magnitudes, and the fractional distance between the bracketing 
+isochrones for the target interpolated isochrones.  For example, if the 
+bracketing isochrones have metallicity 0.004 and 0.008, and the target 
+isochrones are to have metallicity 0.005, the fractional distance should 
+be 0.25.  (This assumes linear variation with metallicity, which is 
+probably ok over small changes in metallicity).
+
+The rest of interp.dat is the list of isochrones to be interpolated.
+column 1 is the first bracketing isochrones (iso1), column 2 is the 
+second bracketing isochrones (iso2), and column 3 is the target 
+isochrones.  Again, there is no strict column format; each filename 
+can be up to 40 characters long.
+
+If you have interpolated in metallicity, you can use the interp.sm 
+SM macro to examine the results.
+% sm
+> macro read interp.sm
+> i 09.00     <-- shows bracketing isos and target iso for age=09.00
+
+The macro assumes metallicities 004, 006 and 008.  Reset the values to 
+match your run.  It's named "i" instead of "interp" because interp 
+is an existing SM command.
+
+interp.sm plots the isochrone tracks in three colors (white=iso1, 
+red=iso2, green=result).  Along each isochrone, the EEPs are shown as large
+symbols: 
+   color-minimum: Triangle
+   color-maximum: Square
+   mag-minimum:   Star
+   mag-maximum:   Asterisk
+

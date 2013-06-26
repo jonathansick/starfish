@@ -1,0 +1,68 @@
+Things you need to know about new changes in StarFISH 1.1.
+
+1.  The input file parser is now much more flexible and 
+robust, but the input file format has changed a bit.  In 
+previous versions, you had to pay attention to the column 
+position of the data on each line:
+
+cmdfile  input/TM.cmds           synthCMD description file
+
+Here, "input/TM.cmds" was the data being read, and it had 
+to exist between columns 10 and 34.  If either the leading 
+comment ("cmdfile") or the trailing comment ("synthCMD 
+description file") infringed on this range of columns, it 
+would cause errors.
+
+The new file format places the data as the first "word" on 
+the line:
+
+input/TM.cmds           synthCMD description file
+
+Everything up to the first <space> character is treated as 
+the data.  Everything after the first space is ignored, no 
+matter where the space occurs.  So a line like this:
+
+47 Number of independent isochrone groups
+
+is totally fine (but may not be very human-readable).  Note 
+that filename arguments must be 40 characters long or less.  
+Let me know if you need this limit to be increased.
+
+Note that the parser cannot accept floating-point numbers in
+exponential notation.  You can no longer use soemthing like
+"1.0e-7" to represent a value, you'd have to use "0.0000001".
+
+In addition, any lines in the input files which begin with "#" 
+or "*" are ignored by the parser, so feel free to comment your 
+input files.  However, note that the order in which valid data 
+lines appear in each input file must be maintained.
+
+
+2.  The random-number generator was not very good in the last 
+version.  We are now using Maclaren's "dprand" code.  Thanks 
+to Tom Brown for investigating this issue.
+
+
+3.  The 'sfh' program can now use Dolphin's "Poisson" fitting 
+statistic, instead of the chi-squared or Lorentzian statistics 
+that were already available.  Just set the "fit statistic" 
+parameter in the sfh input file to "2".
+
+
+4.  The error modeling has been improved.  Instead of representing 
+the "delta-mag" distributions in each crowding bin as a pair of 
+1-dimensional cumulative dsitribution functions, they are now 
+represented as a 2-dimensional cum. distro. fcn.  This allows the 
+model to properly include covariance between the X-errors (color 
+errors) and the Y-errors (mag errors) as a function of position 
+in the CMD(s).
+
+
+5.  While sfh is running, it outputs the current best 
+parameters to the logfile more often than it used to.  It is 
+possible to write a program that will show a "live update" of 
+the current solution while sfh is runing, but I haven't written 
+this yet.  If you want to contribute such a script/program, 
+let me know!
+
+

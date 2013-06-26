@@ -1,0 +1,18 @@
+This directory contains three source code files which are used by several 
+of the StarFISH programs:
+
++ parseline.c:  C is much more flexible for File I/O than FORTRAN, 
+                so we use C functions (callable from FORTRAN programs) 
+                for File I/O.
+
++ utilities.f:  Various FORTRAN routines for File I/O.
+
++ random.f:     The pseudo-random number generator.
+
+
+This directory also contains two files (mkgif.sh and pxl2ppm.awk) for
+generating images of synthetic CMD files.  Simply copy these files into 
+your synthetic CMD library directory, and run './mkgif.sh synthcmd_prefix'.
+See the comments in mkgif.sh for instructions on how to modify the
+script to suit your synthetic CMDs.
+

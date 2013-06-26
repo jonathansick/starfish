@@ -1,0 +1,1271 @@
+\documentclass[12pt]{book}
+\usepackage[usenames]{color}
+\def\aaps{{\it A\&AS}}
+\def\aj{{\it AJ}}
+\definecolor{DarkGreen}{rgb}{0,0.5,0} 
+\definecolor{myBlue}{rgb}{0,0.0,0.75} 
+\definecolor{myRed}{rgb}{0.33,0.0,0.0} 
+\definecolor{myOrange}{rgb}{0.6,0.2,0.0} 
+\def\ttg{\tt\color{DarkGreen}}
+\def\ttb{\tt\color{myBlue}}
+\def\tto{\tt\color{myOrange}}
+\def\itr{\it\color{myRed}}
+
+\evensidemargin 0.0in
+\oddsidemargin 0.0in
+\topmargin -0.2in
+\textheight 9.0in
+\textwidth 6.25in
+
+\begin{document}
+\begin{titlepage}
+\begin{center}
+\vspace{15em}
+{\Huge{\bf StarFISH}} \\
+\medskip
+(\underline{F}or \underline{I}nferring 
+\underline{S}tar-formation \underline{H}istories) \\
+\vspace{5em}
+{\Huge User Manual} \\
+\bigskip
+{\large version 1.1, May 2004} \\
+\vspace{7em}
+{\large Jason Harris and Dennis Zaritsky}\\
+{\ttb jharris@as.arizona.edu} \\
+{\ttb dzaritsky@as.arizona.edu} \\
+\end{center}
+
+\vfill
+\begin{quote}
+\hrule
+Permission is granted to copy, distribute and/or modify this
+document under the terms of the GNU Free Documentation License,
+Version 1.1 or any later version published by the Free Software
+Foundation; with no Invariant Sections, no Front-Cover Texts and
+no Back-Cover Texts.
+\end{quote}
+\end{titlepage}
+
+\tableofcontents
+
+\include{sfh_manual.toc}
+
+\chapter{Introduction}\label{ch:intro}
+
+\section{Overview}
+
+The {\bf StarFISH} package is a suite of FORTRAN programs designed to 
+determine the best-fit star formation history (SFH) of a stellar 
+population.  The package constructs a library of synthetic 
+color-magnitude diagrams (CMDs) based on theoretical isochrones and 
+data-derived determinations of the interstellar extinction, 
+photometric errors, and distance modulus.  These synthetic CMDs are 
+combined linearly and statistically compared to observed photometry.  
+When the best-fitting model is found, the amplitude coefficients on 
+each synthetic CMD describe the star formation history of the observed 
+population.
+
+\medskip
+\noindent
+If you have any comments, corrections, suggestions, or complaints,
+please email: \\
+{\ttb jharris@as.arizona.edu}
+
+\bigskip
+\noindent
+To use the package, you need:
+
+\begin{itemize}
+\item {\bf Multicolor photometry} of a stellar population. \\
+
+\item A (preferably empirical) {\bf photometric error model}, 
+typically derived from artificial star tests. \\
+
+\item A {\bf library of isochrones} that covers relevant ranges in age 
+and metallicity. \\
+
+\item {\it a priori} determination of the {\bf interstellar 
+extinction} and {\bf distance modulus}. \\
+
+\item Estimates (or guesses) of the {\bf binary fraction} and {\bf IMF 
+slope}. \\
+\end{itemize}
+
+\clearpage
+
+The package consists of three main programs, and five support
+programs: 
+
+\begin{quote}
+\bigskip\noindent
+$\bullet$ {\ttg mklib}: constructs a library of isochrone 
+photometry from raw isochrones.
+
+\medskip\noindent
+$\bullet$ {\ttg synth}: constructs synthetic CMDs 
+from the isochrones, applying the effects of interstellar extinction, 
+binarity, IMF, and photometric errors as appropriate for the data.
+
+\medskip\noindent
+$\bullet$ {\ttg sfh}:   performs a 
+maximum-likelihood comparison of composite model CMDs and input data 
+CMDs.  The best-fit star formation history is output. 
+
+
+\bigskip\noindent
+- {\ttg interp}:  interpolates between adjacent 
+isochrones, to improve resolution in age and/or metallicity.  Requires 
+knowledge of equivalent evolutionary points (EEPs) along each 
+isochrone. 
+   
+\medskip\noindent
+- {\ttg testpop}: constructs artificial stellar 
+populations from the isochrones.  {\ttg testpop} 
+incorporates the photometric errors, extinction, etc. exactly as is 
+done in {\ttg synth}.  These populations can be 
+input to {\ttg sfh} for testing purposes.  
+({\ttg testpop} is in the subdirectory of the same 
+name)
+
+\medskip\noindent
+- {\ttg repop}: same as {\ttg testpop}, except used to construct an 
+artificial population from the SFH amplitudes found by {\ttg sfh}.  
+This is useful for model/data comparisons. ({\ttg repop} is in the 
+subdirectory of the same name)
+
+\medskip\noindent
+- {\ttg testchi}: allows one to examine the parameter space of the 
+fit by hand.  SF amplitudes and other parameters can be interactively 
+adjusted, and the resulting fit recomputed on the fly. ({\ttg testchi} 
+is in the subdirectory of the same name) 
+
+\medskip\noindent
+- {\ttg mkimages.sh}: creates CMD images from the best-fit model.  It 
+also creates CMD maps of each region's contribution to the fitting 
+statistic. 
+\end{quote}
+
+\clearpage
+
+\section{Getting Started}
+
+To begin, you need to obtain the program code from the Magellanic 
+Clouds Photometric Survey website: \\
+{\ttb http://ngala.as.arizona.edu/mcsurvey/}
+
+\medskip
+As of this writing, the current version is 1.1.  Note that there is a 
+full version and a compact version.  The full version includes a 
+sample pre-generated synthetic CMD library for testing purposes.  If 
+you download the compact version, you can still generate the sample 
+synthCMD library, but it will take some time.
+
+\medskip 
+The following command will unpack the directory tree of the StarFISH 
+distribution. It will create a {\ttg SFH-1.1} subdirectory in the 
+current directory.
+
+\medskip\noindent
+{\ttg \% tar zxvf SFH-1.1.tar.gz} \hfill (or {\ttg tar zxvf SFH-1.1compact.tar.gz}) \\
+
+\noindent or (on Solaris): \\
+\medskip
+\noindent
+{\ttg \% gunzip SFH-1.1.tar.gz} \\
+{\ttg \% tar xvf SFH-1.1.tar}
+
+\medskip
+The package contents are shown in {\bf Table~1}.
+
+\bigskip
+\noindent{\large {\bf Table 1: Package Contents}}\\
+{\scriptsize
+\begin{tabular}{|l|l|}
+\hline
+{\bf File/Directory Name}  & {\bf Description} \\ 
+\hline
+{\ttg manual/}     & The StarFISH manual (this document)\\
+{\ttg libcode/}    & source code and Makefile for the {\ttg mklib} program\\
+{\ttg synthcode/}  & source code and Makefile for the {\ttg synth} program\\
+{\ttg sfhcode/}    & source code and Makefile for the {\ttg sfh} program\\
+{\ttg commoncode/} & source code used by multiple programs\\
+{\ttg interpcode/} & source code and Makefile for the {\ttg geteep} and {\ttg interp} programs\\
+{\ttg input/}      & input data files for {\ttg mklib}, {\ttg synth} and {\ttg sfh}\\
+\hspace{20pt}{\ttg /lib.dat}   & sample {\ttg mklib} parameter file\\
+\hspace{20pt}{\ttg /synth.dat} & sample {\ttg synth} parameter file\\
+\hspace{20pt}{\ttg /sfh.dat}   & sample {\ttg sfh} parameter file\\
+\hspace{20pt}{\ttg /iso.dat}   & sample isochrone description files\\
+\hspace{20pt}{\ttg /iso.lock}  & describes how isochrones are to be locked together\\
+\hspace{20pt}{\ttg /test.cmds} & sample synthetic CMD description file\\
+\hspace{20pt}{\ttg /mask.none} & file indicating CMD regions to ignore in the fit (default: null mask)\\
+\hspace{20pt}{\ttg /test.hold} & file indicating which SFH amplitudes should be held fixed (default: none held)\\
+\hspace{20pt}{\ttg /av/*.av}   & sample extinction data files\\
+\hspace{20pt}{\ttg /crowd/*.crowd} & sample crowding table from artificial star tests\\
+\hspace{20pt}{\ttg /dtime.dat} & file describing age interval covered by each isochrone\\
+\hspace{20pt}{\ttg /geteep.dat} & input file for {\ttg geteep} \\
+\hspace{20pt}{\ttg /interp.dat} & input file for {\ttg interp} \\
+\hspace{20pt}{\ttg /testchi.dat} & input file for {\ttg testchi} \\
+{\ttg testpop/} & files related to the {\ttg testpop} support program\\
+{\ttg testchicode/} & files related to the {\ttg testchi} support program\\
+{\ttg repop/}   & files related to the {\ttg repop} support program\\
+{\ttg grid/}    & files related to the {\ttg grid} support scripts\\
+{\ttg iso/}     & raw isochrone photometry from Girardi et~al. (2002, 2000) 
+                  and Bertelli et~al. (1994)\\
+{\ttg testlib/}\footnotemark[1]  & sample isochrone library produced by {\ttg mklib}\\
+{\ttg test.syn/}\footnotemark[1] & sample synthetic CMDs based on artificial star tests
+                                   from an image of NGC~1978.\\
+{\ttg data/}   & input data photometry goes here (NGC~1978 photometry included)\\
+{\ttg output/} & {\ttg sfh} results and the {\ttg sfh.sm} plotting script\\ \hline
+\end{tabular}
+}
+
+\footnotetext[1]{Not present in the compact version of the program}
+
+\clearpage
+
+\section{Compiling the Principal Code}
+
+Each principal program ({\ttg mklib}, {\ttg synth}, and {\ttg sfh}) 
+has its own Makefile, in its source code directory.  To compile these 
+programs, simply cd to the correct directory and type {\ttg make}:
+
+\medskip
+\noindent
+{\ttg \% cd /path/to/SFH-1.1} \hfill (if not already in the SFH directory) \\
+{\ttg \% cd libcode} \\
+{\ttg \% make} \\
+{\ttg \% cd ../synthcode} \\
+{\ttg \% make} \\
+{\ttg \% cd ../sfhcode} \\
+{\ttg \% make}
+
+\medskip
+Each program will be copied into the {\ttg SFH-1.1} directory, which 
+is where you should run them.  You are now ready to experiment with 
+the code.
+
+\vspace{2em}
+\section{A Quick Run}
+
+We will use all of the default parameter values to go from a freshly 
+downloaded and compiled distribution to a successful first run of 
+{\ttg sfh}.  Steps labeled with an asterisk (*) may be skipped if you 
+downloaded the full version of StarFISH, because this version already 
+contains the pregenerated isochrone library and synthetic CMD library.
+
+\begin{enumerate}
+
+\item {\ttg \% cd /path/to/SFH-1.1} \hfill (if not already in the SFH directory)
+
+\item (*) Prepare isochrones:  (see Section~\ref{sec:iso})\\
+{\ttg \% cd iso} \\
+{\ttg \% tar zxvf girardi.tar.gz} \hfill (unpack the isochrones) \\
+{\ttg \% gawk -f parse\_iso.awk isocz*.dat} \hfill (parse isochrones) 
+
+\item (*) Generate isochrone library: (see Chapter~\ref{ch:lib})\\
+{\ttg \% cd ..} \\
+{\ttg \% mkdir testlib} \hfill (create target directory before running {\ttg mklib}!)\\
+{\ttg \% ./mklib < input/lib.dat} 
+
+\item (*) Generate Synthetic CMD library: (see Chapter~\ref{ch:synth}) \\
+{\ttg \% mkdir test.syn} \hfill (create target directory before running {\ttg synth}!)\\
+{\ttg \% ./synth < input/synth.dat} 
+
+\item Perform SFH Solution: (see Chapter~\ref{ch:sfh}) \\
+{\ttg \% ./sfh < input/sfh.dat} 
+
+\item Plot solution: \\
+{\ttg \% cd output} \\
+{\ttg \% sm} \hfill (start supermongo plotting program) \\
+{\ttg sm$>$ macro read sfh.sm } \hfill (load sm script) \\
+%{\tt sm$>$ dev x11} \hfill (bring up display window) \\
+{\ttg sm$>$ sfh c1978 c1978} \hfill (display SFH solution)
+\end{enumerate}
+
+\clearpage
+
+\section{What's New in Version 1.1}
+
+There have been several improvements made since 1.0; the most 
+important changes are listed here.  See the files {\ttg ChangeLog} and 
+{\ttg NEWSTUFF} for more details.
+
+\begin{itemize}
+\item Fixed random-number generator.  We found a periodicity in 
+the previous one. \\
+
+\item More robust handling of input files.  The programs are now 
+much less picky about the format of input files ({\itr note that 
+input files from previous versions of StarFISH are not compatible 
+with this version}). \\
+
+\item Input files can now contain comment lines.  Any line in an 
+input file that begins with {\ttg \#} or {\ttg *} will be ignored by 
+the parser. \\
+
+\item Filenames in the input files can now be up to 40 characters 
+long (previous maximum was 24 characters) \\
+
+\item Option to use Dolphin's ``Poisson'' fit statistic instead of 
+the chi-squared statistic. \\
+
+\item The photometric error model used in {\ttg synth}, 
+{\ttg testpop}, and {\ttg repop} now properly includes covariance 
+between the color and magnitude errors. \\
+
+\item Option to use an analytic error model instead of an 
+AST-derived crowding table in {\ttg synth}, {\ttg testpop}, and 
+{\ttg repop}. \\
+
+\item {\ttg sfh} writes the current best solution to the logfile more 
+frequently. \\
+
+\item New empirical isochrone interpolation code ({\ttg geteep} and 
+{\ttg interp})
+
+\end{itemize}
+
+
+\chapter{mklib}\label{ch:lib}
+
+{\ttg mklib} is used for processing raw isochrone photometry into a 
+format usable by {\ttg synth}.  {\ttg mklib} applies a distance modulus, 
+interpolates along the isochrone to a uniformly high resolution, and 
+computes occupation probabilities (OP) for each isochrone point.
+
+The package currently ships with the Padua isochrones, most recently
+published by Girardi et~al. (2002).  We found that the main sequence 
+in these isochrones is too coarsely sampled for our purposes, 
+resulting in artificially "lumpy" synthetic CMDs. Therefore,  
+{\ttg mklib} includes a photometric interpolation routine for points 
+fainter than the main sequence turn-off (MSTO; defined for each 
+isochrone in the {\tto isofile}).  If your isochrones do not require 
+this interpolation, simply set the MSTO magnitude for each isochrone 
+to be fainter than any isochrone point.  
+
+\bigskip
+The {\ttg mklib} input file (named {\ttg input/lib.dat} by default) 
+contains the parameters listed in Table~2 (the lines 
+must be present in the listed order). \\
+
+\noindent{\large {\bf Table 2: mklib input file parameters}} \\
+{\scriptsize
+\begin{tabular}{|lr|l|}
+\hline
+{\tto isofile} &[string]& description of each isochrone: the input filename, \\
+               &        & the output filename, the age, and the MSTO magnitude. \\
+{\tto faint}   & [real] & the faint magnitude limit for the output isochrone library.\\
+               &        & Should be several mag fainter than the data's faint limit. \\
+{\tto dmag}    & [real] & photometric distance between adjacent interpolated points.\\
+{\tto dmod}    & [real] & distance modulus \\
+{\tto gamma}   & [real] & logarithmic IMF slope (Salpeter = -1.35) \\
+{\tto nmag}    &  [int] & number of magnitude values per isochrone point \\
+{\tto mag0}    &  [int] & which magnitude to check against {\bf faint} and  {\bf msto} \\
+{\tto iverb}   &  [int] & verbosity flag (0=silent, 1=screen messages, 2=extra output files)  \\
+\hline
+\end{tabular}
+}
+
+\clearpage
+
+\noindent
+To use {\ttg mklib}:
+
+\begin{enumerate}
+\item {\bf Create an isofile that describes your isochrones.}  This 
+file will also be used by {\ttg synth}.  Each line in the file should 
+contain the following space-delimited fields (the column format does 
+not matter):
+
+\medskip\noindent
+{\tto log(age)}~[real number], 
+{\tto input raw isochrone file}~[up to 40 chars], 
+{\tto output isochrone file}~[up to 40 chars], 
+{\tto msto\_mag}~[real number]
+
+\medskip
+{\tto msto\_mag} is the absolute magnitude of each isochrone's MSTO point.  
+If you do not know the MSTOs for your isochrones, you'll need to identify 
+them.  Use the fact that at the MSTO, the occupation probability changes 
+dramatically.
+\medskip
+
+\item {\bf Preprocess the isochrone photometry files}.  Each isochrone 
+must be in its own file with a name matching the isochrone's entry in 
+the {\tto input raw isochrone file} list (column 2 of the isofile).  
+The columns required for the isochrone files are:
+
+\medskip\noindent
+{\tto mass}, {\tto mag1}, {\tto mag2}, {\tto mag3}, ..., {\tto magN}
+ 
+\medskip
+where N is the equal to the {\tto nmag} parameter in {\ttg lib.dat}.  
+Column format does not matter.  The magnitudes should be expressed as 
+absolute magnitudes; {\ttg mklib} will apply the distance modulus 
+specified in {\ttg lib.dat} and output apparent magnitudes.  For the 
+default Padua isochrones, the input isochrone files are generated by 
+the {\ttg parse\_iso.awk} script. See the next section for details on 
+the default isochrone-processing.  Make sure the {\tto mag0} parameter 
+indicates the pass-band which should be used for comparing to the 
+{\tto faint} and {\tto msto\_mag} values.  
+
+\medskip
+\item {\bf Create the target output directory, if necessary}. The 
+output directory is specfied as part of the output filenames in the 
+{\tto isofile}.
+
+\medskip
+\item {\bf Run {\ttg mklib}:} \\
+{\ttg \% ./mklib < input/lib.dat}
+
+\medskip
+Depending on the verbosity flag, {\ttg mklib} may provide screen 
+messages regarding which isochrone it is working on.  The output 
+directory will contain the processed isochrones, with the following 
+columns:
+
+\medskip\noindent
+{\tto mag1}, {\tto mag2}, {\tto mag3}, ..., {\tto magN}, {\tto OP}, 
+{\tto mass}
+
+\medskip
+where the {\tto magN} are the apparent magnitudes in each band, 
+{\tto OP} is the relative occupation probability associated with each 
+point (determined from the IMF and from the relative duration of each 
+evolutionary stage), and {\tto mass} is the {\bf initial} mass of each 
+isochrone point, not including any mass-loss that may have occured 
+since the star was formed.
+\end{enumerate}
+
+\clearpage
+
+\section{Pre-processing the Padua Isochrones}\label{sec:iso}
+
+The {\ttg iso/} directory contains files related to the Padua 
+isochrones, which we ship with StarFISH for convenience.  You are free 
+to use any other isochrone set that you wish, as long as it can be 
+placed in the format that {\ttg mklib} requires (separate files for 
+each isochrone, with the column format specified in step 2 above).
+
+The Padua isochrones are disributed as a tar archive, which we include 
+in StarFISH as the file {\ttg iso/girardi.tar.gz}.  The archive contents 
+are listed in Table~3.
+
+\bigskip
+\noindent{\large {\bf Table 3: Padua isochrone package contents}} \\
+\begin{tabular}{|l|l|}
+\hline 
+{\ttg isocz0[001,004,01,04,08,19,30].dat} &  Girardi et~al. isochrones\\
+{\ttg isocsummz0[001,004,01,04,08,19,30].dat} &  Tables of Equivalent 
+    Evolutionary \\
+    & Points (EEPs) \\ 
+{\ttg read.me} &  Girardi's readme file\\ 
+\hline
+\end{tabular}
+
+\vspace{3em}
+Each of the isochrone files {\ttg isocz0*.dat} contains isochrones of 
+all ages for a given metallicity.  StarFISH needs a separate file for 
+each isochrone, so we provide the AWK script {\ttg parse\_iso.awk} to 
+divide each raw isochrone collection into individual files.  We also 
+provide the script {\ttg parse\_summ.awk} to divide the EEP table 
+collections into individual EEP tables for each isochrone.
+
+If you downloaded the full version of StarFISH, then you do not need 
+to run the parsing scripts; you already have the processed isochrone 
+files, named {\ttg iso/zNNNN\_tt.tt} (where {\ttg NNNN} is a 4-digit 
+code for the metallicity, such as {\ttg 0080}; and {\ttg tt.tt} is the 
+log of the age, such as {\ttg 10.00}).  If you do not have these 
+files, generate them like this:
+
+\medskip\noindent
+{\ttg \% cd iso}\\
+{\ttg \% tar zxvf girardi.tar.gz} \\
+{\ttg \% gawk -f parse\_iso.awk isocz*.dat} \\
+{\ttg \% gawk -f parse\_summ.awk isocsummz*.dat} \\
+
+\medskip
+If you are satisfied with the age and metallicity resolution provided 
+by the default Padua isochrones, then you are all done here.  If you 
+want to try to interpolate between isochrones to increase age or 
+metallicity resolution, refer to the chapter discussing the 
+{\ttg interp} support program.
+
+
+\chapter{synth}\label{ch:synth}
+
+{\ttg synth} constructs a synthetic CMD library from the isochrone 
+library, incorporating the photometric effects of extinction, 
+binarity, the IMF, and photometric errors.  Each synthetic CMD is 
+represented as a list of ``pixel values'', equal to the relative number 
+of stars found at the corresponding subregion in the CMD.  If the data 
+contain more than two filters, then multiple CMDs can be created for 
+each isochrone, so that all of the data can be utilized in the fit.  
+For example, if your data include $U$, $B$, and $V$ photometry, you 
+might use {\ttg synth} to create two CMDs per isochrone: one with 
+$U-B$ vs. $B$ axes, and another with $B-V$ vs. $V$ axes.
+
+Some of the user-provided parameters (extinction, photometric errors, 
+and binarity) are first encountered in the {\ttg synth} program. 
+Others (the IMF and distance modulus) have already been used to 
+create the isochrones output by {\ttg mklib}.  Therefore, if you need 
+to change the IMF or distance modulus you must run {\ttg mklib} first. 
+
+Depending on the age and metallicity resolution of your isochrone 
+library, and on the quality of your photometric data, it is likely
+that some of the isochrones are photometrically degenerate.  If 
+{\ttg synth} is allowed to produce degenerate synthetic CMDs, then the 
+SFH solution determined by {\ttg sfh} will be ambiguous, and will 
+suffer from large correlated uncertainties among the SFH amplitudes.  
+To avoid ambiguous SFH fits, {\ttg synth} can combine 
+photometrically-degenerate isochrones together into the same synthetic 
+CMD.  This is referred to as {\bf locking} the isochrones. 
+
+\clearpage
+
+\noindent The synth input file ({\ttg input/synth.dat}) contains the 
+parameters listed in Table~4. {\itr Note that synth input files from 
+previous versions of StarFISH will no longer work}.
+
+\bigskip
+\noindent{\large {\bf Table 4: synth input file parameters}} \\
+{\scriptsize
+\begin{tabular}{|lr|l|}
+\hline
+\multicolumn{3}{|c|}{\bf Filenames} \\ 
+\hline
+{\tto isofile}  &[string]& description of the isochrones (can use the file from {\ttg lib.dat}) \\
+{\tto lockfile} &[string]& file describing the combination of degenerate isochrones\\
+{\tto hotfile}  &[string]& list of extinction measurements of hot (young) stars\\
+{\tto coldfile} &[string]& list of extinction measurements of cool (old) stars\\
+{\tto crowd1}   &[string]& crowding table from artificial star test\\
+{\tto crowd2}   &[string]& output file for lookup table of binned delta-magnitudes \\ 
+\hline
+\multicolumn{3}{|c|}{\bf CMDs} \\ 
+\hline
+{\tto nmag} &  [int] & same as nmag in {\ttg lib.dat}\\
+{\tto ncmd} &  [int] & number of CMDs to construct per isochrone group\\
+{\tto mag0} &  [int] & same as mag0 in {\ttg lib.dat}\\ 
+{\tto dpix} & [real] & size of CMD pixels (in magnitudes) {\itr[NEW]}\\
+\hline
+\multicolumn{3}{|c|}{\bf parameters for each of the CMDs} \\ 
+\hline
+{\tto xeq}    &[string]& filter equation for the x-dimension\\
+{\tto yeq}    &[string]& filter equation for the y-dimension\\
+{\tto xmin}   & [real] & smallest allowable x-value\\
+{\tto xmax}   & [real] & largest allowable x-value\\
+{\tto ymin}   & [real] & smallest allowable y-value\\
+{\tto ycmax}  & [real] & largest allowable y-value, for crowding table stars\\
+{\tto ypmax}  & [real] & largest allowable y-value, for data/model stars\\
+{\tto suffix} &[string]& filename suffix for the synthetic CMD output files\\ 
+\hline
+\multicolumn{3}{|c|}{\bf Crowding} \\ 
+\hline
+{\tto dbinx} & [real] & width of crowding bins, in magnitudes\\
+{\tto dbiny} & [real] & height of crowding bins, in magnitudes\\
+{\tto emin}  & [real] & minimum delta-magnitude cutoff\\
+{\tto emax}  & [real] & maximum delta-magnitude cutoff\\
+{\tto dbin}  & [real] & binsize of delta-magnitude histograms\\ 
+\hline
+\multicolumn{3}{|c|}{\bf Reddening parameters} \\ 
+\hline
+{\tto red(i)} & [real] & extinction in mag(i) (relative to the filter in which extinction is measured) \\ 
+\hline
+\multicolumn{3}{|c|}{\bf Run-time parameters} \\ 
+\hline
+{\tto verb}        &  [int] & verbosity flag (higher N = more output)\\
+{\tto interp\_err} & [flag]\footnotemark[2] & 1 = interpolate errors between bracketing crowding bins {\itr[NEW]}\\
+{\tto fake\_errs}  & [flag]\footnotemark[2] & 1 = use analytic error model instead of crowding table {\itr[NEW]}\\
+{\tto nscale}      &  [int] & number of model stars in each CMD\\
+{\tto seed}        &  [int] & random seed value\\
+{\tto mass1}       & [real] & minimum mass (for OP normalization)\\
+{\tto mass2}       & [real] & maximum mass (for OP normalization)\\
+{\tto gamma}       & [real] & logarithmic IMF slope (Salpeter = -1.35)\\
+{\tto faint}       & [real] & faint limit for generated model stars\\
+{\tto fbinary}     & [real] & binary fraction\\ 
+\hline
+\end{tabular}
+}
+\footnotetext[2]{A flag is an int whose value can either be 0 or 1.}
+
+\clearpage
+\noindent To use {\ttg synth}:
+
+\begin{enumerate}
+\item {\bf Construct the {\tto lockfile}.}  This file describes how the 
+isochrones are to be locked together into groups.  Again, this is 
+necessary if isochrones of similar age are photometrically degenerate, 
+to avoid ambiguous SFH fits.  The columns of the {\tto lockfile} are as 
+follows ({\itr note that lockfiles from previous versions of StarFISH 
+will no longer work}):
+
+\medskip
+\noindent
+{\tto group\_id}[int], 
+{\tto isoname}[up to 40 characters], 
+{\tto synthfilestem} [up to 40 characters]
+
+\medskip
+{\tto group\_id} identifies the locked group to which the isochrone 
+belongs.  The actual {\tto group\_id} values do not matter; when the 
+value of one line is different from that of the previous line, a new 
+synthetic CMD is started.
+
+{\tto isoname} is the isochrone filename.  It is only used to 
+check against the filename in the {\tto isofile}.  If they don't 
+match, an error is triggered; there must be a one-to-one 
+correspondence of the isochrones in the {\tto isofile} and the 
+{\tto lockfile}.
+
+{\tto synthfilestem} is the filename stem for the output synthetic 
+CMD pixel file.  The output filenames are constructed by concatenating 
+the CMD suffixes specified in {\ttg synth.dat} onto 
+{\tto synthfilestem} (these suffixes are typically the combination of 
+magnitudes; for example a $U-B$ vs. $B$ CMD might have a suffix of 
+``{\ttg .ub}'').
+
+\item {\bf Construct the extinction files ({\tto hotfile}, 
+{\tto coldfile}).}  The extinction files each contain a single column: 
+extinction values, $A_{\lambda}$, measured in the magnitude whose 
+reddening parameter in {\ttg synth.dat} is set to 1.00 (in the 
+provided {\ttg synth.dat}, red(3) is set to 1.00; this is the $V$ 
+band, so the extinction files list $A_V$ values).  There are two files 
+({\tto hotfile} and {\tto coldfile}) to account for the different 
+extinction properties of young and old stellar populations.  If you do 
+not require population-dependent extinction, simply point 
+{\tto hotfile} and {\tto coldfile} to the same file.  If you do not 
+require extinction modeling at all, point {\tto hotfile} and 
+{\tto coldfile} to the null extinction file, {\ttg input/av/zero.av}.
+   
+\item {\bf Construct the crowding table ({\tto crowd1})}. This is most 
+likely constructed from artificial star tests.  The crowding table 
+contains:
+
+\medskip   
+{\tto ra}, {\tto dec}, {\tto mag1}, {\tto dmag1}, {\tto mag2}, {\tto dmag2}, 
+..., {\tto magN}, {\tto dmagN}
+
+\medskip\noindent
+column format doesn't matter.  The crowding table should contain all 
+artificial stars injected into your data images, even if they were not 
+detected in your photometric pipeline.  In fact, these non-recovered 
+``dropout'' stars are extremely important, because {\ttg synth} uses 
+them to determine the completeness rate as a function of photometric 
+position in the CMDs.  For bands in which an artificial star was 
+detected, the listed {\tto mag} value is its {\bf recovered} 
+magnitude, and {\tto dmag} is (mag(recovered) - mag(input)).  For 
+bands in which an artificial star dropped out, {\tto mag} is the 
+star's {\bf input} magnitude, and {\tto dmag} is set to 9.99 in order 
+to flag it as a dropout in that band.  
+
+If you decide not to perform artificial star tests on your images 
+(although such tests are {\it highly} recommended), you can either 
+generate a fake crowding table by hand, based on your estimates of the 
+scatter and completeness rates in each band, or you can set the 
+{\tto fake\_errs} parameter in {\ttg synth.dat} to 1, which will use a
+hueristic analytic error model instead of the empirical crowding 
+table.  In this case, you will need to modify the code in 
+{\ttg synthcode/fakecrowd.f} to generate photometric errors and 
+completeness rates appropriate for your data.  The comments in that 
+file will guide you in making these changes.
+
+\item Decide how many CMDs you would like, and what their axes will 
+be.  You specify the CMD axes with the {\tto xeq(icmd)} and 
+{\tto yeq(icmd)} string variables in {\ttg synth.dat}.  These strings 
+indicate the filter combination for each CMD axis.  For example, you 
+have $VRI$ photometry, and you are using $V$=1, $R$=2, $I$=3.  Your 
+first CMD could be: $V-I$ vs. $V$, so {\tto xeq(1)} = 1-3, 
+{\tto yeq(1)} = 1.  Your other ``CMD" could be a two-color diagram: 
+$V-R$ vs. $V-I$, so {\tto xeq(2)} = 1-2, {\tto yeq(2)} = 1-3.  The 
+strings can be either the sum or the difference of two filter indices, 
+or one index by itself.  Do not put whitespace in the equations; each 
+must be a single ``word''.
+
+You will also need to specify photometric limits for each CMD 
+(parameters {\tto xmin}, {\tto xmax}, {\tto ymin}, {\tto ycmax}, and 
+{\tto ypmax}).  Note that instead of one {\tt ymax}, there are two 
+variables: {\tto ycmax} and {\tto ypmax}.  {\tto ycmax} is the faint 
+limit for the crowding bins, and {\tto ypmax} is the faint limit for 
+the CMD itself.  {\tto ycmax} should be at least 2 or 3 mag fainter 
+than {\tto ypmax}, because very faint stars can be blended and 
+detected at much brighter magnitudes than their true magnitude.  
+
+Also specify the size of CMD ``pixels'' in the output synthetic CMD 
+files ({\tto dpix}), in magnitudes.
+
+Finally, specify a suffix string that will be concatenated with 
+{\tto synthfilestem} to construct the output file name for each 
+synthetic CMD.  The suffices can be up to 8 characters long, and 
+typically indicate something about the CMD axes. For example, a
+$B-V$ vs. $V$ CMD might have a suffix ``{\ttg .bv}''.
+
+\item Specify the size of the crowding bins in each direction 
+({\tto dbinx} and {\tto dbiny}).  Artificial stars in the crowding 
+table are binned in the CMDs so that the brightness- and 
+color-dependence of the photometric errors can be accounted for.
+Independent $\Delta mag$ histograms will be constructed from the 
+artificial stars present in each bin.  
+
+Specify the limits for the delta-mag histograms with {\tto emin} and 
+{\tto emax}.  Any $\Delta mag$ value in the crowding table outside 
+these limits is treated as a photometric dropout.
+
+The {\tto dbin} parameter sets the width of the bins in the delta-mag 
+histograms ({\itr this parameter used to determine the size of the 
+synthetic CMD pixels as well, but there is now a separate parameter 
+for that: dpix}).
+
+\item Specify the reddening law to use, by setting the relative 
+extinction for each band: {\tto red(imag)}.  The band for which you 
+have measured extinction values in {\tto hotfile} and {\tto coldfile} 
+should have {\tto red(imag)} = 1.0.  The rest of the values should be 
+the extinction in that band, assuming the extinction in the reference 
+band is 1.0.  For example, you have $BV$ photometry, and measured 
+A$_V$ extinction values.  A$_V$ = 1.0.  If we assume that 
+A$_V$/E(B-V) = 3.2 = A$_V$/(A$_B$ - A$_V$), then A$_B$ = 1.3125. 
+
+\item Specify miscellaneous parameters.  {\tto nscale} sets the number 
+of model stars to include in each CMD.  {\tto nscale} should be much 
+larger than the number of stars in your data CMDs, so that the Poisson 
+noise in the models is much smaller than in the data.  {\tto iseed} is 
+the random seed value; it can be any integer.  {\tto mass1}, 
+{\tto mass2}, and {\tto gamma} are IMF parameters used for normalizing 
+the pixel values.  {\ttg synth} will only attempt to add model stars 
+brighter than the {\tto faint} parameter.  This is an efficiency 
+feature: without this cutoff, the code would waste a lot of time 
+adding undetectable stars.  Set {\tto faint} to just fainter than 
+where your completeness rate reaches 0\%.
+
+\item Once the parameter file is complete, and the other input files 
+are ready, you can finally run {\ttg synth}.  It will take quite a bit 
+of time to complete, depending on computing power and the number of 
+isochrones.  I found it usually took several hours to process 150 
+isochrones on a 700 MHz linux box.  
+\end{enumerate}
+
+You can examine the synthetic CMDs as images, using either the IRAF 
+{\tt rtext} command, or the {\ttg mkgif.bat} and {\ttg pxl2ppm.awk} 
+scripts I provide in the {\ttg commoncode} directory.
+
+
+\chapter{sfh}\label{ch:sfh}
+
+{\ttg sfh} performs a ``chi-squared-like'' minimization comparison 
+between data photometry and a linear combination of the synthetic 
+CMDs.  Each synthetic CMD is modulated by an {\bf amplitude} that is 
+proportional to the number of stars with the age and metallicity of 
+the synthetic CMD's parent isochrone(s).  These amplitudes form the 
+multidimensional parameter space of the minimization.
+
+I say ``chi-squared-like'' because you may actually choose among three 
+statistics to determine the quality of the fit: chi-squared, 
+Lorentzian, or Poisson.  The three parameters weight outliers slightly 
+differently, but they are otherwise quite similar.  Hereafter, I will 
+simply refer to the fitting statistic as ``chi-squared''.
+
+The minimization analysis employs the downhill simplex ``amoeba'' 
+algorithm as described in Numerical Recipes (Press {\it et al.}; 
+hereafter NR).  We have written our own implementation of this 
+algorithm.  It works by sampling a small region of the parameter  
+space and determining the local chi-squared gradient.  It then takes a 
+small step in the down-gradient direction, and determines the local 
+chi-squared gradient around this new location.  The process iterates 
+until a (nearly) zero gradient is found, signalling that a minimum
+has been found.  
+
+The amoeba algorithm in NR has some safeguards against finding local 
+minima, but we found that it was still prone to getting stuck.  The 
+simplex by definition can only sample parameter space along directions 
+parallel to the N axes of the parameter space; it is blind to off-axis 
+directions.  However, as it nears the minimum, lower chi-squared 
+values will tend to be found when a change in one parameter is 
+complemented by a change in one or more other parameters.  In other 
+words, downward gradients will tend to lie along off-axis directions.
+
+To remedy this problem with the pure simplex method, we add a 
+random-search loop, which is triggered whenever the simplex claims it 
+has found a minimum.  In the random-search loop, we select a random 
+direction in the multidimensional parameter space, and take a small 
+step along that direction.  If the step yields a smaller chi-squared
+value, we continue stepping along that direction until we reach a step 
+that no longer decreases chi-squared.  This is repeated for a large 
+number of random directions, and the parameter space location which 
+yielded the lowest overall chi-squared value is recorded.  The simplex 
+is then restarted at this new parameter space location.
+
+This iteration between the downhill simplex algorithm and the 
+random-search loop is repeated until the random-search loop cannot 
+find a direction which yields a lower chi-squared value.
+We then accept the last simplex location as the true minimum, and 
+output the best-fit SFH amplitudes.
+
+\bigskip
+\noindent The {\ttg sfh} input file ({\ttg input/sfh.dat}) contains 
+the following parameters:
+
+\medskip
+\noindent
+{\scriptsize
+\begin{tabular}{|lr|l|} 
+\hline
+\multicolumn{3}{|c|}{\bf Filenames} \\ 
+\hline
+{\tto datpre}   &[string]& input data file prefix\\ 
+{\tto cmdfile}  &[string]& Sample synthetic CMDs description file\\
+{\tto maskfile} &[string]& Allows one to ignore specified regions of the CMDs\\
+{\tto holdfile} &[string]& file w/ SFH amplitudes that should be held fixed\\
+{\tto outfile}  &[string]& contains final best-fit SFH amplitudes\\
+{\tto logfile}  &[string]& file w/ current best SFH (useful for monitoring, and for\\
+                && restarting an interrupted run)\\
+{\tto plgfile}  &[string]& log of all tested parameter locations \\
+                && (this file will be very large; not used by default: {\tto iplg}=0)\\
+{\tto chifile}  &[string]& output file containing grid populations and chi-squared values\\
+\hline
+\multicolumn{3}{|c|}{\bf Synthetic CMD parameters} \\ 
+\hline
+{\tto nfree}  & [int]& number of independent isochrone amplitudes\\
+{\tto ncmd}   & [int]& number of CMDs over which to calculate chi-squared\\
+{\tto npix}   & [int]& binning factor for CMDs\\
+{\tto dpix}   &[real]& size of synthetic CMD pixels (same as in {\ttg synth.dat})\\
+\hline
+\multicolumn{3}{|c|}{\bf Parameters for each CMD} \\ 
+\hline
+{\tto suffix(i)} &[string]& CMD filename suffix (same as in {\ttg synth.dat})\\
+{\tto   xmin(i)} & [real] & calculate chi-squared within these CMD limits\\
+{\tto   xmax(i)} & [real] & calculate chi-squared within these CMD limits\\
+{\tto   ymin(i)} & [real] & calculate chi-squared within these CMD limits\\
+{\tto   ymax(i)} & [real] & calculate chi-squared within these CMD limits\\
+{\tto   nbox(i)} &  [int] & number of grid boxes within region defined by above limits\\ 
+\hline
+\multicolumn{3}{|c|}{\bf Runtime parameters} \\ 
+\hline
+{\tto seed}      &  [int]&  random seed value \\
+{\tto fit\_stat} &  [int]&  0 = use chi-squared; 1 = use Lorentzian; 2 = Use Poisson\\
+{\tto uselog}    & [flag]&  1 = start searching at logged position in logfile\\
+{\tto iplg}      & [flag]&  1 = generate plgfile (warning: this file will be very large!)\\
+{\tto gtype}     & [flag]&  grid definition flag (0 = uniform grid; 1 = custom grid)\\
+{\tto iverb}     &  [int]& verbosity flag (larger N = more screen output)\\
+{\tto lambda}    & [real]& initial size of simplex\\
+{\tto conf}      & [real]& confidence interval for computing errorbars (e.g., 1 sigma = 0.68)\\
+{\tto cthr}      & [real]& if ($\Delta\chi^2$ $>$ cthr), consider new location an improvement\\
+{\tto ptol}      & [real]& if ($|p\_new - p\_old| > ptol$), consider new location different\\
+{\tto ftol}      & [real]& if simplex's chi-squared values span less than ftol, signal a zero \\
+                 &       & gradient (i.e., a minimum) \\
+{\tto nvec}      &  [int]& number of parameter space directions in random-search loop\\
+{\tto ntry}      &  [int]& number of iterations for determining errorbars\\
+\hline
+\end{tabular}
+}
+
+\clearpage
+
+\noindent
+To use {\ttg sfh}:
+
+\begin{enumerate}
+\item {\bf construct the {\tto cmdfile}}.  The file's columns are:
+
+\medskip\noindent
+{\tto z\_metal}, {\tto log\_age}, {\tto filenamestem}
+
+\medskip\noindent
+Column format does not matter.  Note that some lines in the
+{\tto cmdfile} may represent multiple isochrones.  In these cases, 
+just choose a representative age/metallicity for the group.  These 
+values are only used to identify the amplitudes in the output file.  
+The {\tto filenamestem} needs to point to the synthetic CMD files 
+generated with {\ttg synth}.
+
+\item {\bf Decide on a CMD gridding strategy}.  {\ttg sfh} works by 
+binning the CMDs and comparing the number of data and model stars in 
+each bin.  The default is to uniformly bin the CMDs in each dimension 
+with a binsize of {\tto npix}$\times${\tto dpix}.  If you want to use 
+a custom grid instead, write a subroutine to assign gridbox numbers to 
+each CMD pixel, add a call to your subroutine in {\ttg grid.f}, and 
+set {\tto gtype} to 1 in {\ttg sfh.dat}.  You must also add your 
+custom-grid source code files to {\ttg sfhcode/Makefile}.  An example 
+custom grid can be reviewed in the files {\ttg ubbgrid.f}, 
+{\ttg bvvgrid.f}, and {\ttg viigrid.f}.  These grids were constructed 
+for our LMC data, and are fine in densely populated regions of the 
+CMDs and coarse in sparsely populated regions.
+
+The boxes in each CMD's grid are identified by a single number, the
+box number.  Thus the distribution of stars in the CMDs can be
+expressed as a two-dimensional array whose indices identify the CMD
+and the gridbox within that CMD: {\tt nstars(icmd, ibox)}. 
+{\tt icmd} refers to which CMD you are considering, {\tt ibox} is the 
+number of the box in that CMD.  Indicate the total number of boxes in 
+each CMD with the {\tto nbox(icmd)} parameter. 
+
+\item {\bf Construct the {\tto maskfile}}.  the file's columns are:
+
+\medskip\noindent
+{\tto icmd},  {\tto ibox},  {\tto maskflag}
+
+\medskip\noindent
+Column format does not matter.  if {\tto maskflag}=1, the stars in 
+({\tt icmd}, {\tt ibox}) will be excluded from the determination of 
+the fit.
+
+\item {\bf  Preprocess the data photometry}.  You need to have a 
+separate photometry file for each CMD.  The filenames need to be 
+({\tto datpre} + {\tto sffx(icmd)}), where {\tto datpre} and 
+{\tto sffx(icmd)} are specified in {\ttg input/sfh.dat}.  The first 
+column in each CMD file is the x-dimension magnitude, and the second 
+column is the y-dimension magnitude.  Other columns are ignored, but 
+could be used for (ra, dec) coordinates or other useful information.   
+Note that the {\tto sffx(icmd)} values need to be the same as the 
+{\tto suffix(icmd)} values in {\ttg synth.dat}, and that the CMD 
+limits ({\tto xmin}, {\tto xmax}, {\tto ymin}, {\tto ymax}) need to be 
+the same also.
+
+\item {\bf Adjust the sfh runtime parameters.}  The default values 
+should work well, but feel free to tweak them.
+
+\item {\bf Run {\ttg sfh}}.  Depending on the value of {\tto iverb}, 
+it may provide screen output on its progress (status messages, 
+current lowest chi-squared value).  Generally, larger values of 
+{\tto iverb} produces more screen output.  {\tto iverb}=0 will
+print no screen messages; {\tto iverb}=3 provides ``live'' updates
+of the convergence process.  If the run gets interrupted for 
+some reason, you can resume at the last logged position by setting 
+{\tto uselog}=1 (assuming the {\tto logfile} exists).
+
+\item {\bf Evaluate the goodness-of-fit.}  When the run is complete, 
+it will print out the lowest chi-squared value found.  Divide this by 
+({\tto nboxes}-{\tto nfree}) to get the reduced chi-squared, which 
+should probably be less than $\sim10$ for a good fit.  
+
+To examine the SFH solution, you can use the {\ttg sfh.sm} supermongo 
+script (in the {\ttg output/} subdirectory).  All of the customizable
+parameters for this script are collected at the top of the file.  See
+the comments in the file for guidance in adjusting these settings.
+
+If there is a problem with the SFH fit (e.g., high chi-squared value), 
+you can use the following diagnostics (each of these programs has its 
+own Chapter in this manual):
+
+\begin{enumerate}
+\item the {\ttg repop} program produces artificial stellar photometry 
+based on the best-fit amplitudes, to be compared to the data CMDs. 
+
+\item the {\ttg mkimages.sh} script in the {\ttg grid/} subdirectory, 
+which converts the gridbox populations in the {\tto chifile} into 
+images, and embeds them into an HTML document for easy comparison.  
+
+\item the {\ttg testchi} program allows you to tweak the SFH 
+amplitudes and parameter values.  It then calculates a new chi-squared 
+value for the new model.
+\end{enumerate}
+
+\end{enumerate}
+
+
+\chapter{geteep and interp}
+
+{\ttg geteep} and {\ttg interp} are used to interpolate between 
+isochrones to increase the nominal matallicity and/or age resolution.
+To compile the programs, cd to the {\ttg interpcode} directory and 
+type {\ttg make}.  This will create the {\ttg geteep} and 
+{\ttg interp} programs in the root {\ttg SFH-1.1} directory.
+
+{\ttg geteep} identifies empirical ``equivalent evolutionary points''
+(EEPs) in each isochrone.  True EEPs are stellar evolution events 
+which can be identified in the isochrones, such as ``the main sequence 
+turn-off'' or ``the tip of the red giant branch''.  These are very 
+useful for interpolating between isochrones.  In fact, the older 
+Padua isochrones provide EEP tables for this purpose, but the new
+isochrones published in 2002 did not have this information (StarFISH 
+includes the older EEP tables, but we don't make use of them since 
+they are missing for some isochrones).
+
+Since we don't have EEP tables for all of the isochrones, we need a 
+way to identify EEPs (or something like them), which is what 
+{\ttg geteep} does.  It identifies empirical EEPs (eEEPs) as local 
+extrema in color or brightness, along the isochrone track in one of 
+the CMDs.  Many of these points correspond to ``true'' EEPs (e.g., the 
+TRGB is a local brightness maximum).  The point is to identify points 
+which represent the same evolutionary state in two similar isochrones; 
+we feel that the color/brightness extrema do this well.
+
+The {\ttg geteep} input file has a two-line header.  The first line 
+contains an integer equal to the number of magnitudes representing 
+each point in the isochrones.  The second line contains an integer 
+identifying the magnitude which will be the vertical ``brightness'' 
+axis in the target CMD (in which eEEPs will be identified).  The 
+horizontal axis is automatically set to be the color index 
+(mag(i-1) - mag(i)), so don't choose ``1'' for the vertical axis.
+The remainder of the file lists the isochrone files to be processed,
+and the list of output isochrones in which eEEPs have been identified.
+
+Once you have run {\ttg geteep} to identify and label the eEEPs in 
+each isochrone, you can run {\ttg interp} to interpolate between the 
+isochrones.  The {\ttg interp} input file has three header lines at 
+the top which identify the number of magnitudes, the vertical-axis 
+magnitude, and the fractional distance between the bracketing 
+isochrones for the target interpolated isochrones.  For example, if 
+the bracketing isochrones have metallicity 0.004 and 0.008, and the 
+target isochrones are to have metallicity 0.005, the fractional 
+distance should be 0.25. (This assumes linear variation with 
+metallicity, which is probably Ok over small changes in metallicity).
+
+The rest of the {\ttg interp} input file is the list of isochrones to 
+be interpolated.  In each row, column 1 is the first bracketing 
+isochrone, column 2 is the second bracketing isochrone, and column 3 
+is the target isochrone.  Again, there is no strict column format; 
+each filename can be up to 40 characters long.
+
+
+\chapter{testpop}\label{ch:testpop}
+
+{\ttg testpop} constructs artificial stellar photometry based on a 
+user-specified star formation history.  It is basically a different 
+front-end to the {\ttg synth} code base.  Build {\ttg testpop} by 
+typing {\ttg make} in the {\ttg testpop} directory.  {\ttg testpop} 
+reads a (probably modified) version of the {\ttg synth} input file, 
+which must be named {\ttg testpop/synth.dat}.  It also reads its 
+own input parameter file, which is specified on the command line:
+
+\medskip
+\noindent 
+{\ttg \% ./testpop < input\_file}
+
+\medskip
+\noindent 
+The input file should contain the following 8 header lines:
+
+\medskip
+\noindent
+\begin{tabular}{|lr|l|} \hline
+{\tto pre}      &[string]& a prefix for the output photometry files (up to 8 characters) \\
+{\tto lockflag} &[flag]& 1 = use locked amplitudes (use {\tto lockfile} in synth.dat) \\
+{\tto nstars}   &[int]& an amp of 1.0 will draw {\tto nstars} masses from the isochrone \\
+{\tto dmod}     &[real]& delta-distance modulus.  For adjusting the DM of the isochrones \\
+{\tto fext}     &[real]& additional extinction multiplier \\
+{\tto gamma}    &[real]& IMF slope ({\ttg testpop} recalculates OPs) \\
+{\tto fbinary}  &[real]& Binary fraction \\ 
+{\tto sfrflag}  &[flag]& 1 = amps are expressed as $M_\odot/yr$; 0 = amps are Nstars/bin \\ \hline
+\end{tabular}
+
+\medskip
+\noindent
+The values for {\tto gamma} and {\tto fbinary} supercede the values in 
+{\ttg synth.dat}.  Immediately following these 8 parameters, the input 
+file should contain N lines with the following columns:
+
+\medskip
+\noindent
+{\ttg $Amp_{SFH}$, $Z_{metal}$, $log(age)$, $num_{iso}$}
+
+\medskip
+\noindent
+There should be one line for each isochrone in the isofile (if 
+{\tto lockflag}=0), or one line for each independent isochrone group 
+(if {\tto lockflag}=1).  {\ttg testpop} determines the number of stars 
+to generate for isochrone $i$ according to the formula:
+
+$$N(i) = nstars \times Amp(i) \times frac(i) \times \Delta t(i) / num_{iso}(i)$$
+
+\noindent where: $frac(i)$ is the fraction of the full mass range that 
+is represented on the isochrone ($frac(i)$ decreases with age, as more 
+stars have evolved to their non-luminous end-states); $\Delta t(i)$ is 
+the duration of the age bin, in Gyr; and $num_{iso}(i)$ is the number 
+of isochrones in the current isochrone group.  If {\tto sfrflag}=0, 
+then $\Delta t(i)=1.0$ for all $i$.  If {\tto lockflag}=0, then
+$num_{iso}(i)=1$ for all $i$.
+
+Be aware that, in general, many more stars are generated than actually 
+appear in the CMDs, because a large fraction of the generated stars 
+will be too faint to detect.  
+
+\medskip
+\noindent
+{\ttg testpop} outputs {\tt ncmd} output photometry files, each 
+containing the following data:
+
+\medskip
+\noindent
+{\ttg $mag_x$},  {\ttg $mag_y$}, {\ttg $\Delta_x$}, {\ttg $\Delta_y$}
+
+\medskip
+\noindent
+These files may be used directly as input data to the {\ttg sfh} 
+program.
+
+
+\chapter{repop}\label{ch:repop}
+
+\noindent
+{\ttg repop} is nearly identical to {\ttg testpop}.  The only 
+difference is that the input SFH amplitudes are generated from the SFH 
+amplitudes output by {\ttg sfh}.  {\ttg repop} constructs an 
+artificial stellar population based on the best-fit SFH solution, so 
+that it can be compared to the input population.
+
+Before using {\ttg repop}, you must first generate the input SFH 
+amplitudes file using {\ttg mkinput.awk}:
+
+\medskip
+\noindent
+{\ttg \% cd repop} \\
+{\ttg \% gawk -f mkinput.awk -v pre=file\_prefix sfh\_output\_file}
+
+\medskip
+You may need to modify this script to make it suitable to your data.
+Specifically, the number of isochrone groups and number of isochrones 
+per group are hard-coded, as are the metallicity strings.
+
+Now you can actually run {\ttg repop}, specifying the new input file 
+on the command line:
+\medskip
+\noindent
+{\ttg \% repop $<$ file\_prefix.input}
+
+\medskip
+The number of stars constructed by {\ttg repop} is probably different 
+from the number of data stars.  To generate the same number of stars, 
+follow these steps:
+
+\begin{enumerate}
+\item use {\ttg wc} to count the number of stars in one of repop's 
+output CMD files, and the corresponding input data CMD file.
+ 
+\item multiply {\tto nscale} (in the {\ttg repop} input file) by 
+N(data)/N(repop)
+
+\item run {\ttg repop} again
+\end{enumerate}
+
+The {\ttg repop.sm} script can be used to display the CMDs of the 
+generated population.  Again, you may need to modify this script.  
+This script as written displays the repopulated B-V,V CMD alongside 
+the original B-V,V CMD for easy comparison. It takes two arguments, 
+the prefixes of the repopulated and original photometry files.
+
+
+\chapter{testchi}\label{ch:testchi}
+
+{\ttg testchi} provides an interactive front-end to the 
+{\ttg fitstat.f} subroutine, which calculates the fitting statistic of 
+a given model SFH.  Compile testchi by typing {\ttg make} in the 
+{\ttg testchi} directory (the executable is placed in the root 
+{\ttg SFH-1.1} directory).
+
+The {\ttg testchi} input file is a simplified version of the 
+{\ttg sfh} input file, with several parameters removed.  The 
+{\ttg testchi} input file contains the following parameters:
+ 
+\medskip
+\noindent
+{\scriptsize
+\begin{tabular}{|lr|l|} 
+\hline
+\multicolumn{3}{|c|}{\bf Filenames} \\ 
+\hline
+{\tto datpre}   &[string]& input data file prefix\\ 
+{\tto cmdfile}  &[string]& Sample synthetic CMDs description file\\
+{\tto maskfile} &[string]& Allows one to ignore specified regions of the CMDs\\
+{\tto holdfile} &[string]& file w/ SFH amplitudes that should be held fixed\\
+{\tto ampfile}  &[string]& the input model SFH amplitudes to test\\
+{\tto chifile}  &[string]& output file containing grid populations and chi-squared values\\
+\hline
+\multicolumn{3}{|c|}{\bf Synthetic CMD parameters} \\ 
+\hline
+{\tto nfree}  &[int]& number of independent isochrone amplitudes\\
+{\tto ncmd}   &[int]& number of CMDs over which to calculate chi-squared\\
+{\tto npix}   &[int]& binning factor for CMDs\\
+{\tto dpix}   &[real]& size of synthetic CMD pixels (same as in {\ttg synth.dat})\\
+\hline
+\multicolumn{3}{|c|}{\bf Parameters for each CMD} \\
+\hline
+{\tto suffix(i)} &[string]& CMD filename suffix (same as in {\ttg synth.dat})\\
+{\tto   xmin(i)} &[real]& calculate chi-squared within these CMD limits\\
+{\tto   xmax(i)} &[real]& calculate chi-squared within these CMD limits\\
+{\tto   ymin(i)} &[real]& calculate chi-squared within these CMD limits\\
+{\tto   ymax(i)} &[real]& calculate chi-squared within these CMD limits\\
+{\tto   nbox(i)} &[int]& number of grid boxes within region defined by above limits\\ 
+\hline
+\multicolumn{3}{|c|}{\bf Runtime parameters} \\ 
+\hline
+{\tto fit\_stat} &[int]&  0 = use chi-squared; 1 = use Lorentzian; 2 = Use Poisson\\
+{\tto gtype}     &[flag]&  grid definition flag (0 = uniform grid; 1 = custom grid)\\
+{\tto iverb}     &[int]& verbosity flag (larger N = more screen output)\\
+\hline
+\end{tabular}
+}
+
+\medskip
+To use {\ttg testchi}, adjust the parameters in {\ttg testchi.dat} (or 
+create a new input file) and run the program:
+
+\medskip\noindent
+{\ttg \% ./testchi < input/testchi.dat}
+
+\medskip
+The chi-squared value resulting from a comparison of the data and the 
+model described by the {\tto outfile} is printed to the screen, and 
+the gridbox populations are written to the {\tto chifile}.  
+
+{\ttg testchi} is very useful for quickly seeing changes in the 
+chi-squared value when the SFH amplitudes (or other parameters) are 
+changed.  You can examine the distribution of chi-squared in the CMDs 
+using the {\tto chifile}, and the {\ttg mkimages.sh} script.
+
+
+\chapter{mkimages.sh}\label{ch:grid}
+
+The {\ttg grid} subdirectory contains the script {\ttg mkimages.sh},
+which generates images of the CMDs from the grid box populations in 
+the {\tto chifile}, and generates an HTML document which displays the 
+images in a grid.  The HTML document provides a very convenient way to 
+examine the quality of the model fit, and to diagnose what may be 
+causing a poor fit.
+
+The script requires files named {\ttg grid/gridN.index} which 
+contains a description of the grid boxes in each of your CMDs
+(each CMD has its own index file). The columns are: 
+
+\medskip\noindent
+{\ttg ix}, {\ttg iy}, {\ttg ibox}
+
+\medskip
+\noindent
+where ({\ttg ix}, {\ttg iy}) are the synthetic CMD pixel coordinates, 
+and {\ttg ibox} is the grid box to which that pixel belongs.  You can 
+modify the program {\ttg mkgrid.f} to generate the gridN.index files 
+for your CMDs.
+
+Once you have valid {\ttg gridN.index} files, you can use the 
+{\ttg mkimages.sh} script to generate the images and HTML page.  
+Before running the script, there are several parameters which should 
+be adjusted; see the "CUSTOMIZATION" section of the {\ttg mkimages.sh} 
+file.
+
+When running the script, you specify a filename prefix for the HTML 
+document and images, and the name of the {\tto chifile} on the command 
+line:
+
+\medskip\noindent
+{\ttg \% ./mkimages.sh c1978 ../output/c1978.chi}
+
+\medskip
+The script will generate 4 images per CMD, which will be placed in the 
+{\ttg images/} subdirectory.  The images represent the grid box 
+populations of the model and of the data; the difference between model 
+and data, and the contribution of each grid box to the fitting 
+statistic.  You can view all of the images using the HTML document 
+that is created by the script.
+
+
+\begin{thebibliography}{75}
+
+\bibitem[Bertelli et~al. (1994)]{ber94}
+{Bertelli}, G., {Bressan}, A., {Chiosi}, C., {Fagotto}, F., \& {Nasi}, E. 1994,
+  \aaps, 106, 275
+
+\bibitem[Girardi et~al. (2000)]{gir00}
+{Girardi}, L., {Bressan}, A., {Bertelli}, G., \& {Chiosi}, C. 2000,
+  \aaps, 141, 371
+  
+\end{thebibliography}
+\end{document}

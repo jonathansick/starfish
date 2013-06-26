@@ -1,0 +1,179 @@
+=============================================================
+ StarFISH : A package For Inferring Star-formation Histories  
+----------------------=---=---------=--------------=---------  
+
+     version 1.1, released May 2004
+     by Jason Harris (jharris@as.arizona.edu)
+
+     http://ngala.as.arizona.edu/mcsurvey/SFH/
+
+     See also: Harris and Zaritsky, 2001, ApJS, 136, 25.
+     
+=============================================================
+
+Table of Contents:
+-------------------
+
+1.  Introduction
+
+2.  Package contents
+
+3.  How to use the package
+
+4.  Note on different architectures (Linux, sunOS, OSF, etc)
+
+
+1.  Introduction
+-------------------
+
+The starFISH package is a suite of FORTRAN programs designed to
+determine the best-fit star formation history of a stellar population.
+The package constructs a library of synthetic color-magnitude diagrams 
+(CMDs) based on theoretical isochrones and data-derived determinations
+of the interstellar extinction, photometric errors, and distance
+modulus.  These synthetic CMDs are combined linearly into a composite 
+model, which is then statistically compared to observed photometry.  
+When the best-fitting model is found, the amplitude coefficients on 
+each synthetic CMD describe the star formation history of the observed 
+population. 
+
+
+To use the package, you need:
+
+1. Multicolor photometry of a stellar population.
+2. A (preferably empirical) photometric error model, typically 
+   derived from artificial star tests.
+3. A library of isochrones that covers relevant ranges in age and 
+   metallicity (Padua isochrones are included in the starFISH package).
+4. Determination of the interstellar extinction and distance modulus.
+5. Estimates (or guesses) of the binary fraction and IMF slope.
+
+
+The package consists of three main programs, and five support
+programs: 
+
++ mklib: constructs a library of isochrone photometry from raw 
+         isochrones.
++ synth: constructs synthetic CMDs from the isochrones, applying
+         interstellar extinction, binarity, IMF, and photometric
+	 errors as appropriate for the data.
++ sfh:   constructs composite model CMDs from the synthetic CMDs and
+         performs a chi**2 minimization between model and data CMDs.
+         The best-fit star formation history amplitudes are output. 
+
+
+- interp:  interpolates between adjacent isochrones, to improve resolution
+           in age and/or metallicity.  Requires knowledge of equivalent 
+           evolutionary points (EEPs) along each isochrone.
+
+- testpop: constructs artificial stellar populations from the isochrones,
+           according to a given star formation history. 
+           testpop incorporates the photometric errors, extinction, etc. 
+           exactly as is done in synth.  These populations can be input
+           as a "data" population to sfh for testing purposes.
+
+- repop:   same as testpop, except that the artificial stellar population 
+           is constructed according to the SFH output by the sfh program.
+           This is useful for checking the quality of the SFH 
+           determination by comparing the original photometry to the 
+           artificial population representing the best fit.
+
+- testchi: allows one to examine the parameter space of the statistical
+           fit by hand.  SF amplitudes and other parameters can be 
+           interactively adjusted, and the resulting fit-statistic 
+           recomputed on the fly.
+
+- grid:    scripts used to create a CMD image from the best-fit model.
+           can also create a chi**2 map of the CMD.
+
+
+2.  Package contents:
+-----------------------
+
+README             : this file
+NEWSTUFF           : Important information about the new version (1.1)
+ChangeLog          : List of changes since the last release
+manual/            : The StarFISH User Manual
+libcode/           : source code for the mklib program
+synthcode/         : source code for the synth program
+sfhcode/           : source code for the sfh program
+commoncode/        : miscellaneous source code
+input/             : input data files for lib, synth and sfh
+  geteep.dat       : input file for geteep, the isochrone EEP identifier
+  interp.dat       : input file for interp, the isochrone interpolator
+  lib.dat          : mklib parameter file
+  synth.dat        : synth parameter file
+  sfh.dat          : sfh parameter file
+  iso.dat          : sample isochrone description files
+  iso.lock         : describe how isochrones are to be locked together
+  test.cmds        : sample synth CMD description file
+  test.hold        : file indicating which SFH amplitudes to hold fixed
+  mask.none        : file indicating CMD regions to ignore in the fit
+  dtime.dat        : file describing age interval of each isochrone grp
+  av/              : extinction files
+    test.cold.av   : sample extinction file for "cold" stars
+    test.hot.av    : sample extinction file for "hot" stars
+    zero.av        : extinction file for using no extinction
+    compare.sm     : SM macro for comparing two extinction sets.
+  crowd/           : crowding/AST files
+    test.crowd     : sample crowding table from artificial star tests
+    test.cfn       : sample cumulative fcn table (constructed by synth) 
+    cmds.sm        : SM macro to plot CMDs of AST stars
+testpop/           : files related to the testpop support program
+testchicode/       : files related to the testchi support program
+repop/             : files related to the repop support program
+grid/              : files related to the grid support scripts
+interpcode/        : files related to isochrone interpolation
+iso/               : raw isochrone photometry, from Girardi et al. (1999)
+testlib/           : sample isochrone library, produced by mklib
+test.syn/          : sample synthetic CMDs based on LMC scan 79 ASTs
+data/              : input data photometry goes here
+output/            : sfh results and the sfh.sm plotting script
+
+
+3.  How to use the package:
+----------------------------
+
+The package is shipped pre-tuned for the data and isochrones that we 
+are using in our analysis of the Magellanic Clouds.  I have attempted
+to make the code as general as possible.  Customization can be done almost 
+exclusively via the input parameter files.  My intention is that you will 
+not have to change the source code, but that is certainly an option.
+
+User documentation can be found in the StarFISH manual 
+(manual/sfh_manual.pdf).  Additional documentation for the supplementary 
+programs can be found in the README files in their respective 
+subdirectories.
+
+
+4.  Notes on Different Architectures:
+--------------------------------------
+
+StarFISH was developed on a PC running Redhat Linux.  It has been 
+tested on sunOS, Solaris, OSF, and Linux/PPC.  There are slight 
+differences in the fortran compilers for these platforms, but we 
+believe we have accounted for these differences in the code.
+
+The FORTRAN compiler and AWK parser are named differently on different
+platforms.  As shipped, StarFISH assumes the FORTRAN compiler is
+'g77', and the advanced AWK parser is 'gawk'.  These programs may be
+called 'f77' and 'nawk' on your system (note: you shouldn't use plain
+'awk', only 'nawk' and 'gawk' understand the scripts in the package).
+Be sure to change references to these programs as you encounter them.
+For example, you'd have to change the $(FORT) definition in each
+Makefile from 'g77' to 'f77'.
+
+
+If you have any comments, corrections, suggestions, or complaints,
+please email me: jharris@as.arizona.edu
+
+I hope you find these programs useful.
+
+
+Jason Harris
+
+v. 1.0    July 2000
+v. 1.0.1 March 2001
+v. 1.0.2   May 2001
+v. 1.0.5   Aug 2002
+v. 1.1     May 2004

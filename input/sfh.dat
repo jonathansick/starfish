@@ -1,0 +1,46 @@
+### Filenames ### 
+data/c1978              data photometry file prefix
+input/test.cmds         synthCMD description file
+input/mask.none         CMD grid mask file
+input/test.hold         File with fixed amplitude values
+output/c1978.dat        recovered SFH
+output/current.log      file to log current best SFH
+output/c1978.plg        file to log p,y
+output/c1978.chi        file with box pops and fit stat
+### synthetic CMD parameters ###
+47                      number of independent isochrone groups
+3                       number of CMDs per isochrone group
+5                       bin synthCMD pixels NxN
+0.050                   size of CMD pixels
+.ub                     CMD 1 file suffix
+-1.30                   CMD 1 minimum x-value
+ 2.20                   CMD 1 maximum x-value
+12.00                   CMD 1 minimum y-value
+22.00                   CMD 1 maximum y-value
+560                     CMD 1 number of grid boxes
+.bv                     CMD 2 file suffix
+-0.50                   CMD 2 minimum x-value
+ 2.00                   CMD 2 maximum x-value
+12.00                   CMD 2 minimum y-value
+22.00                   CMD 2 maximum y-value
+400                     CMD 2 number of grid boxes
+.vi                     CMD 3 file suffix
+-0.50                   CMD 3 minimum x-value
+ 2.50                   CMD 3 maximum x-value
+12.00                   CMD 3 minimum y-value
+22.00                   CMD 3 maximum y-value
+480                     CMD 3 number of grid boxes
+### Runtime parameters ###
+294                     random seed
+0                       fit statistic: 0 = chi**2; 1 = P_Lor; 2 = Poisson
+1                       starting position: 0 = random; 1 = last logged 
+0                       full param-search record: 1 = generate *.plg file
+0                       CMD grid type: 0 = uniform; 1 = user-defined
+3                       verbosity flag: 0 = silent ... 3=max messages
+1000.00                 initial simplex size
+0.680                   confidence level for errbars (0.68=1 sigma)
+1.000                   threshhold delta-chi**2
+10.00                   required parameter tolerance
+0.0000001               required fit_stat tolerance
+10000                   number of parameter directions to search
+3                       number of parameter search attempts

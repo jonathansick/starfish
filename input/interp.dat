@@ -1,0 +1,84 @@
+# Data file for interp.  The header consists of three lines:
+# the number of mags present for each isochrone point, the 
+# the mag ID which should be used for the Y-axis, and the 
+# fractional distance between the the bracketing pair of 
+# isochrones, for the target isochrone.
+# This is followed by lines listing the two bracketing 
+# isochrone files, and the target interpolated isochrone file.
+4 
+3
+0.5
+iso/z008_06.60  iso/z004_06.60  iso/z006_06.60
+iso/z008_06.65  iso/z004_06.65  iso/z006_06.65
+iso/z008_06.70  iso/z004_06.70  iso/z006_06.70
+iso/z008_06.75  iso/z004_06.75  iso/z006_06.75
+iso/z008_06.80  iso/z004_06.80  iso/z006_06.80
+iso/z008_06.85  iso/z004_06.85  iso/z006_06.85
+iso/z008_06.90  iso/z004_06.90  iso/z006_06.90
+iso/z008_06.95  iso/z004_06.95  iso/z006_06.95
+iso/z008_07.00  iso/z004_07.00  iso/z006_07.00
+iso/z008_07.05  iso/z004_07.05  iso/z006_07.05
+iso/z008_07.10  iso/z004_07.10  iso/z006_07.10
+iso/z008_07.15  iso/z004_07.15  iso/z006_07.15
+iso/z008_07.20  iso/z004_07.20  iso/z006_07.20
+iso/z008_07.25  iso/z004_07.25  iso/z006_07.25
+iso/z008_07.30  iso/z004_07.30  iso/z006_07.30
+iso/z008_07.35  iso/z004_07.35  iso/z006_07.35
+iso/z008_07.40  iso/z004_07.40  iso/z006_07.40
+iso/z008_07.45  iso/z004_07.45  iso/z006_07.45
+iso/z008_07.50  iso/z004_07.50  iso/z006_07.50
+iso/z008_07.55  iso/z004_07.55  iso/z006_07.55
+iso/z008_07.60  iso/z004_07.60  iso/z006_07.60
+iso/z008_07.65  iso/z004_07.65  iso/z006_07.65
+iso/z008_07.70  iso/z004_07.70  iso/z006_07.70
+iso/z008_07.75  iso/z004_07.75  iso/z006_07.75
+iso/z008_07.80  iso/z004_07.80  iso/z006_07.80
+iso/z008_07.85  iso/z004_07.85  iso/z006_07.85
+iso/z008_07.90  iso/z004_07.90  iso/z006_07.90
+iso/z008_07.95  iso/z004_07.95  iso/z006_07.95
+iso/z008_08.00  iso/z004_08.00  iso/z006_08.00
+iso/z008_08.05  iso/z004_08.05  iso/z006_08.05
+iso/z008_08.10  iso/z004_08.10  iso/z006_08.10
+iso/z008_08.15  iso/z004_08.15  iso/z006_08.15
+iso/z008_08.20  iso/z004_08.20  iso/z006_08.20
+iso/z008_08.25  iso/z004_08.25  iso/z006_08.25
+iso/z008_08.30  iso/z004_08.30  iso/z006_08.30
+iso/z008_08.35  iso/z004_08.35  iso/z006_08.35
+iso/z008_08.40  iso/z004_08.40  iso/z006_08.40
+iso/z008_08.45  iso/z004_08.45  iso/z006_08.45
+iso/z008_08.50  iso/z004_08.50  iso/z006_08.50
+iso/z008_08.55  iso/z004_08.55  iso/z006_08.55
+iso/z008_08.60  iso/z004_08.60  iso/z006_08.60
+iso/z008_08.65  iso/z004_08.65  iso/z006_08.65
+iso/z008_08.70  iso/z004_08.70  iso/z006_08.70
+iso/z008_08.75  iso/z004_08.75  iso/z006_08.75
+iso/z008_08.80  iso/z004_08.80  iso/z006_08.80
+iso/z008_08.85  iso/z004_08.85  iso/z006_08.85
+iso/z008_08.90  iso/z004_08.90  iso/z006_08.90
+iso/z008_08.95  iso/z004_08.95  iso/z006_08.95
+iso/z008_09.00  iso/z004_09.00  iso/z006_09.00
+iso/z008_09.05  iso/z004_09.05  iso/z006_09.05
+iso/z008_09.10  iso/z004_09.10  iso/z006_09.10
+iso/z008_09.15  iso/z004_09.15  iso/z006_09.15
+iso/z008_09.20  iso/z004_09.20  iso/z006_09.20
+iso/z008_09.25  iso/z004_09.25  iso/z006_09.25
+iso/z008_09.30  iso/z004_09.30  iso/z006_09.30
+iso/z008_09.35  iso/z004_09.35  iso/z006_09.35
+iso/z008_09.40  iso/z004_09.40  iso/z006_09.40
+iso/z008_09.45  iso/z004_09.45  iso/z006_09.45
+iso/z008_09.50  iso/z004_09.50  iso/z006_09.50
+iso/z008_09.55  iso/z004_09.55  iso/z006_09.55
+iso/z008_09.60  iso/z004_09.60  iso/z006_09.60
+iso/z008_09.65  iso/z004_09.65  iso/z006_09.65
+iso/z008_09.70  iso/z004_09.70  iso/z006_09.70
+iso/z008_09.75  iso/z004_09.75  iso/z006_09.75
+iso/z008_09.80  iso/z004_09.80  iso/z006_09.80
+iso/z008_09.85  iso/z004_09.85  iso/z006_09.85
+iso/z008_09.90  iso/z004_09.90  iso/z006_09.90
+iso/z008_09.95  iso/z004_09.95  iso/z006_09.95
+iso/z008_10.00  iso/z004_10.00  iso/z006_10.00
+iso/z008_10.05  iso/z004_10.05  iso/z006_10.05
+iso/z008_10.10  iso/z004_10.10  iso/z006_10.10
+iso/z008_10.15  iso/z004_10.15  iso/z006_10.15
+iso/z008_10.20  iso/z004_10.20  iso/z006_10.20
+iso/z008_10.25  iso/z004_10.25  iso/z006_10.25

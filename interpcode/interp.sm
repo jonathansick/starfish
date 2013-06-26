@@ -1,0 +1,20 @@
+i	1
+	macro read geteep.sm
+
+	dev x11 -bg black
+	erase
+
+	ctype red
+	geteep z004_$1
+#	ptype 30 3
+#	points bv v
+	ctype default
+	geteep z008_$1
+#	ptype 30 3
+#	points bv v
+	ctype green
+	geteep z006_$1
+#	ptype 30 3
+#	points bv v
+	ctype default
+

@@ -1,0 +1,58 @@
+### Filenames ###
+input/iso.dat            Isochrone Description file 
+input/iso.lock           Isochrone Locking file
+input/av/test.hot.av     Hot-star extinction values
+input/av/test.cold.av    Cool-star extinction values
+input/crowd/test.crowd   Artificial Stars Test crowding table
+input/crowd/test.cfn     Crowding lookup file (will be generated)
+### CMDs ###
+4                        Number of magnitudes  
+3                        Number of photometry planes (CMDs, two-color Ds)
+3                        Index of "primary" magnitude   
+0.05                     Size of pixels in synth. phot. plane images (mag)
+ 1-2                     Equation for X-axis of phot. plane 1           
+ 2                       Equation for Y-axis of phot. plane 1           
+-1.30                    minimum X value for fitting, phot. plane 1      
+ 2.20                    maximum X value for fitting, phot. plane 1      
+ 12.00                   minimum Y value for fitting, phot. plane 1      
+ 25.00                   maximum Y value for errors, phot. plane 1      
+ 22.00                   maximum Y value for fitting, phot. plane 1      
+.ub                      filename suffix for output synth. phot. plane 1     
+ 2-3                     Equation for X-axis of phot. plane 2           
+ 3                       Equation for Y-axis of phot. plane 2           
+-0.50                    minimum X value for fitting, phot. plane 2      
+ 2.00                    maximum X value for fitting, phot. plane 2      
+ 12.00                   minimum Y value for fitting, phot. plane 2      
+ 25.00                   maximum Y value for errors, phot. plane 2    
+ 22.00                   maximum Y value for fitting, phot. plane 2      
+.bv                      filename suffix for output synth. phot. plane 2
+ 3-4                     Equation for X-axis of phot. plane 3           
+ 4                       Equation for Y-axis of phot. plane 3           
+-0.50                    minimum X value for fitting, phot. plane 3      
+ 2.50                    maximum X value for fitting, phot. plane 3      
+ 12.00                   minimum Y value for fitting, phot. plane 3      
+ 25.00                   maximum Y value for errors, phot. plane 3    
+ 22.00                   maximum Y value for fitting, phot. plane 3      
+.vi                      filename suffix for output synth. phot. plane 3
+### Crowding parameters ###
+ 0.50                    size of crowding bins, in X (mag)
+ 0.50                    size of crowding bins, in Y (mag)
+-1.00                    minimum valid delta-mag (mag)
+ 1.00                    maximum valid delta-mag (mag)
+ 0.05                    binsize for error-histograms (mag)
+## Reddening parameters ###
+1.5500                   A(1)/A(primary) extinction ratio
+1.3125                   A(2)/A(primary) extinction ratio
+1.0000                   A(3)/A(primary) extinction ratio
+0.6022                   A(4)/A(primary) extinction ratio
+### Run-time parameters ###
+3                        Verbosity flag (0=no output; 3=full screen output)
+1                        1 = interpolate errors between CMD bins 
+0                        0 = use AST errs; 1 = use analytic err model
+1000000                  Number of model stars to generate per isochrone
+24854                    Random seed
+0.10                     Minimum stellar mass (Msun)
+100.00                   Maximum stellar mass (Msun)
+-1.35                    Logarithmic IMF slope (-1.35 = Salpeter)
+25.00                    faint limit for generated model stars (mag)
+0.50                     Binary fraction

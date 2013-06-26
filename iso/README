@@ -1,0 +1,59 @@
+This directory contains files related to the input isochrones.
+If you will use your own isochrones, you may delete all files in this 
+directory and replace them with your isochrone files.  Bear in mind that 
+mklib needs the isochrone files in the following format:
+
+mass   mag1   mag2   ...   magN
+
+
+If you will use the Padua isochrones, or would like some assistance 
+interpolating between your isochrones, read on.
+---------------------------------------------------------------------------
+
+This directory contains:
+
+girardi.tar.gz, which contains:
+  isocz0[001,004,01,04,08,19,30].dat : Girardi et al. (2002) isochrones
+  isocsummz0[004,01,04,08,19,30].dat : EEP tables from Girardi et al. (2000)
+  read.me : Girardi's documentation file (from 2000 isochrones)
+
+parse_iso.awk:     AWK script to parse isocz00*.dat into individual files
+parse_summ.awk:    AWK script to parse isocsummz00*.dat into individual files
+                   (These scripts make one file per isochrone, 
+                    and the files conform to the above column format)
+
+cmds.sm:           Plot a CMD triplet for a given isochrone.  Usage:
+                   SM> cmds z00*_tt.tt <-- arg is the iso filename stem
+                                           (e.g., z008_09.00)
+
+*********************************************************
+The webpage of the Padua isochrone group is:
+http://pleiadi.pd.astro.it/
+Look here for possible updates to the isochrones.
+Please note that the EEP tables (isocsummz*.dat) are 
+from Girardi et al. (2000); at the time of this writing, 
+the summary tables had not been released for the 2002 
+isochrones.
+*********************************************************
+
+To prepare the isochrones for use with mklib, you must unpack the isochrone
+archive and then run the AWK script to separate the raw files into 
+individual isochrones:
+
+   % cd SFH/iso
+   % tar zxvf girardi.tar.gz
+   % gawk -f parse_iso.awk isocz*.dat
+
+This will result in a series of files named zN_tt.tt, where
+N=(0001,0004,001,004,008,019,030) specifies the metallicity and 
+tt.tt indicates log(age) (e.g., tt.tt = 09.00 for the 1-Gyr isochrone).
+These files are ready for use by mklib.
+
+Note that if you downloaded the full version of StarFISH, then this 
+isochrone-parsing step has already been done.
+
+If the metallicities and ages provided by the Padua group are sufficient 
+for your purposes, then you are done.  If you need to interpolate 
+between isochrones to increase the resolution in either age or metallicity,
+see the "interpcode" directory, and the "Geteep and Interp" chapter
+of the StarFISH manual.

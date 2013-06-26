@@ -1,0 +1,60 @@
+Brief explanation of the crowding digest file:
+
+The synth program generates a "digest" file that is a condensed numerical 
+representation of the photometric-error information in a crowding table.
+It's a good idea to name the file similarly to your crowding table file, 
+so that you can tell to which table each digest belongs.  For example,
+if your crowding table is named "starfish.crowd", you should name the 
+digest something similar like "starfish.cfn" (the "cfn" extension refers
+to the fact that the photometric error distributions are stored in the
+digest as cumulative functions).
+
+To generate the digest, synth first divides the crowding table photometry
+into the same CMD planes that will be used for constructing synthetic
+CMDs.  It then divides the artificial stars into a grid of "crowding bins"
+in each CMD (the geometry of the grid is determined by parameters in 
+the synth input file).  The stars in each crowding bin are treated 
+independently.
+
+In each crowding bin, we have a population of artificial stars (both 
+detected stars and photometric dropouts).  The detected stars have known
+"delta-mag" offsets in both the X and Y directions.  By "delta-mag", I 
+mean the quantity (mag(recovered) - mag(input).  You can imagine plotting
+the distribution of the population in the delta-mag(x) vs. delta-mag(y)
+parameter space.  For bright or uncrowded objects, the distribution will 
+be centered at (0,0) with very little dispersion.  For faint, crowded 
+objects, there will be much wider scatter and there may be systematic 
+offsets away from (0,0).  
+
+To assign photometric scatter to model populations when constructing 
+synthetic CMDs, you could simply identify the crowding bin in which the 
+model star lies, and randomly select from the AST population in that bin
+to determine the model star's delta-mags in each direction.
+
+However, there is a problem: we are forced to assume that the photometric
+errors do not change appreciably over the size of a crowding bin.  If 
+two neighboring crowding bins have very different error properties, the 
+synthetic CMDs will have noticeable discontinuities at crowding-bin
+boundaries.
+
+To mitigate this problem, synth will actually interpolate the error 
+properties of the four bracketing crowding bins to the exact position 
+of each model star.  But how can it interpolate between four empirical 
+2-D error distributions?
+
+To enable interpolation, the 2-D error distributions are first pixelized.
+That is, the delta-mag plane is divided into a fine grid of "pixels", and
+we simply count the number of artificial stars found in each pixel.  We 
+then convert the pixel populations to a cumulative distribution, which 
+starts at 0.0 at the lower left, and increases by N(i,j)/Ntotal for each
+pixel (i,j).  So the final pixel has a value of 1.0.
+
+We can then assign photometric scatter in the following way:  
+
+1.  identify the 4 bracketing crowding bins surrounding the model star.
+2.  draw a single random number between 0.0 and 1.0, and determine the 
+    delta-x, delta-y position at which the random value is reached in 
+    each of the 4 bins' cumulative functions.
+3.  Do a bilinear interpolation between the 4 delta-x and delta-y values 
+    to get the offsets at the position of the model star.
+

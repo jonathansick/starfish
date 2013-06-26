@@ -1,0 +1,43 @@
+  Repop:  Construct an artificial stellar population 
+          based on a StarFISH star-formation history
+----------------------------------------------------
+
+Repop is nearly identical to testpop.  The only difference is that 
+this directory contains the script mkinput.awk that will generate 
+an input file for repop, based on SFH amplitudes output by sfh.
+Repop then generates an artificial population that you can use to 
+compare to the real population on which the sfh solution is based.
+
+To use repop:
+
+1. Type 'gawk -f mkinput.awk -v pre=<file_prefix> <amps_file>' 
+   to construct the input file.  The script will generate a file 
+   named '<file_prefix>.input, and repop will use the same prefix.
+   You may need to modify this script to make it suitable to your 
+   data.  Specifically, the isochrone filenames, the number of 
+   isochrone groups, and the number of isochrones in each group 
+   are hard-coded.
+
+2. Examine the generated input file to ensure that it is valid.
+
+3. run 'repop < file_prefix.input'.  The number of stars constructed 
+   by repop is probably different from the number of stars in the 
+   original data.  To match the number of data stars, follow these steps:
+
+   a. use 'wc' to count the number of stars in one of repop's output
+      CMD files, and the corresponding input data CMD file.
+ 
+   b. multiply nscale (in the repop input file) by N(data)/N(repop)
+
+   c. run repop again
+
+5. the repop.sm script can be used to display the CMDs.  Again, you
+   may need to modify this script.  This script as written displays the 
+   U-B,B; B-V,V; and V-I,I CMDs in three panels.  The artificial 
+   population is shown as white points, and the original data are shown
+   as red points.
+
+   It takes two arguments, the prefix of the artificial photometry files,
+   and the prefix of the original photometry files (the data files 
+   are presumed to reside in the ../data directory, and the suffixes of
+   the photometry files are presumed to be '.ub', '.bv', and '.vi').

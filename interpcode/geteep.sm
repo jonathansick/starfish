@@ -1,0 +1,60 @@
+geteep	1
+#	dev x11 -bg black
+	
+	data $1
+	read mass 1
+	read b 3
+	read v 4
+	read node 6
+	set bv=b-v
+
+	set ma=mass if(node==1)
+	set mb=mass if(node==2)
+	set mc=mass if(node==3)
+	set md=mass if(node==4)
+	set bva=bv  if(node==1)
+	set bvb=bv  if(node==2)
+	set bvc=bv  if(node==3)
+	set bvd=bv  if(node==4)
+	set va=v    if(node==1)
+	set vb=v    if(node==2)
+	set vc=v    if(node==3)
+	set vd=v    if(node==4)
+
+	expand 1.2
+	lim -.5 2.2 4 -12
+#	lim -.3 1.5 -8.0 -10.0
+	box
+	xlabel B-V
+	ylabel V
+
+	connect bv v
+	expand 3.0
+	ptype 3 0
+	points bva va
+	ptype 4 0
+	points bvb vb
+	ptype 5 2
+	points bvc vc
+	ptype 6 1
+	points bvd vd
+	expand 1.2
+
+#	expand 1.2
+#	lim 9 12.5 -2 -8
+#	xlabel Mass
+#	ylabel V
+#	box
+#
+#	connect mass v
+#	expand 3.0
+#	ptype 3 0
+#	points ma va
+#	ptype 4 0
+#	points mb vb
+#	ptype 5 2
+#	points mc vc
+#	ptype 6 1
+#	points md vd
+#	expand 1.2
+	

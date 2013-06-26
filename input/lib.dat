@@ -1,0 +1,8 @@
+input/iso.dat           Isochrone Description file
+27.000                  Faintest magnitude to be kept in the library
+ 0.005                  Phot. dist. btwn. interpolated isoc points
+18.500                  distance modulus
+-1.350                  IMF power-law index (-1.35 = Salpeter)
+4                       number of magnitudes (or colors) to read
+3                       index of primary magnitude
+1                       0=silent; 1=screen msgs; 2=extra output files
