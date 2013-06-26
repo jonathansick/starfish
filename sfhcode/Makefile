@@ -3,16 +3,16 @@ FORT = f77
 CFLAGS = -c
 COMDIR = ../commoncode
 BINDIR = ../.
-OBJECTS = sfh.o amoeba.o dchi.o dfstat.o direction.o \
-errs.o fitstat.o grid.o logp.o simplex.o search.o step.o \
-random.o parseline.o utilities.o #\
-#ubbgrid.o bvvgrid.o viigrid.o 
-# To use a custom CMD grid, replace the above files with 
-# your custom grid subroutines (see grid.f).
+HEADER = sfh.h
+DOBJECTS = sfh.o amoeba.o dfstat.o direction.o errs.o \
+fitstat.o grid.o logp.o simplex.o search.o step.o
+OBJECTS = $(DOBJECTS) dchi.o random.o parseline.o utilities.o
 
-sfh : $(OBJECTS) sfh.h
+sfh : $(OBJECTS) $(HEADER)
 	$(FORT) -o sfh $(OBJECTS) 
 	cp -f sfh $(BINDIR)
+
+$(DOBJECTS) : $(HEADER)
 
 random.o : $(COMDIR)/random.f
 	$(FORT) $(CFLAGS) $(COMDIR)/random.f 
