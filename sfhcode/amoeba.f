@@ -84,7 +84,9 @@ c
       ytry = amotry(p,y,psum,ihi,-1.0)
 
       if (ytry.le.y(ilo)) then
-         if ( iverb.ge.3 ) write(*,*) '  current fitstat: ', ytry
+         if ( iverb.ge.3 ) 
+     x        call dblemessage( "  current fitstat: ", ytry )
+
          ytry = amotry(p,y,psum,ihi,2.0)
 
       else if (ytry.ge.y(inhi)) then

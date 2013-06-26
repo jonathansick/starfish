@@ -6,7 +6,7 @@ BINDIR = ../.
 HEADER = sfh.h
 DOBJECTS = sfh.o amoeba.o dfstat.o direction.o errs.o \
 fitstat.o grid.o logp.o simplex.o search.o step.o
-OBJECTS = $(DOBJECTS) dchi.o random.o parseline.o utilities.o
+OBJECTS = $(DOBJECTS) dchi.o random.o parseline.o message.o utilities.o
 
 sfh : $(OBJECTS) $(HEADER)
 	$(FORT) -o sfh $(OBJECTS) 
@@ -18,6 +18,8 @@ random.o : $(COMDIR)/random.f
 	$(FORT) $(CFLAGS) $(COMDIR)/random.f 
 parseline.o : $(COMDIR)/parseline.c
 	$(CC) $(CFLAGS) $(COMDIR)/parseline.c 
+message.o : $(COMDIR)/message.c
+	$(CC) $(CFLAGS) $(COMDIR)/message.c 
 utilities.o : $(COMDIR)/utilities.f
 	$(FORT) $(CFLAGS) $(COMDIR)/utilities.f 
 
