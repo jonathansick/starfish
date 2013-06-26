@@ -3,14 +3,17 @@ FORT = f77
 CFLAGS = -c
 COMDIR = ../commoncode
 BINDIR = ../.
-OBJECTS = synth.o axes.o bin_dmags.o bin_interp.o bincombine.o \
+HEADER = synth.h
+DOBJECTS = synth.o axes.o bin_dmags.o bin_interp.o bincombine.o \
 crowd.o cumfcn.o delta_axes.o dmags.o fakecrowd.o mkcfn.o outpix.o \
-pickphot.o readcrowd.o readphot.o redden.o random.o parseline.o \
-utilities.o
+pickphot.o readcrowd.o readphot.o redden.o scatter.o 
+OBJECTS = $(DOBJECTS) random.o parseline.o utilities.o
 
-synth : $(OBJECTS) synth.h
+synth : $(OBJECTS) $(HEADER)
 	$(FORT) -o synth $(OBJECTS) 
 	cp -f synth $(BINDIR)
+
+$(DOBJECTS) : $(HEADER)
 
 random.o : $(COMDIR)/random.f
 	$(FORT) $(CFLAGS) $(COMDIR)/random.f
