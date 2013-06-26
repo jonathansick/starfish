@@ -3,11 +3,15 @@ F77 = f77
 CFLAGS = -c
 COMDIR = ../commoncode
 BINDIR = ../.
-OBJECTS = lib.o polfit.o pvalue.o parseline.o utilities.o
+HEADER = lib.h
+DOBJECTS = lib.o
+OBJECTS = $(DOBJECTS) polfit.o pvalue.o parseline.o utilities.o
 
-mklib       : $(OBJECTS) lib.h
+mklib       : $(OBJECTS) $(HEADER)
 	$(F77) -o mklib $(OBJECTS)
 	cp -f mklib $(BINDIR)
+
+$(DOBJECTS) : $(HEADER)
 
 parseline.o : $(COMDIR)/parseline.c
 	$(CC) $(CFLAGS) $(COMDIR)/parseline.c
