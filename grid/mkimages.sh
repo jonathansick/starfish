@@ -84,6 +84,7 @@ rm -f *.pxl
 # (specifically, the convert program):
 for i in ${icmd[*]}
 do
+  mkdir -p images
   convert ${stem1[$i]}.ppm images/${stem1[$i]}.png
   convert ${stem2[$i]}.ppm images/${stem2[$i]}.png
   convert ${stem3[$i]}.ppm images/${stem3[$i]}.png
@@ -92,6 +93,7 @@ done
 rm -f *.ppm
 
 # Generate an HTML page displaying the images in a table
+rm -f $1.html
 gawk -f mkhtml.awk -v pre=$1 -v cmds=$cmdstring
 
 # END
