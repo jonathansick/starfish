@@ -7,7 +7,7 @@ sfh	2
 ## Begin Customization section
 ##
 ## Set "0" for screen output; "1" for PostScript output
-	define out_type 0
+	define out_type 1
 ##
 ## avgmass is the average stellar mass (1.628 for Salpeter IMF)
 	define avgmass 1.628
