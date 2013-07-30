@@ -204,7 +204,7 @@ c ***
       if (iverb.ge.3) write(*,*) ' Initializing simplex '
          
 c     If logfile exists and uselog=1, start at logged position...
-      open(unit=11,file=logfile,type="old",iostat=iflag)
+      open(unit=11,file=logfile,status="old",iostat=iflag)
       if (iflag.eq.0.and.uselog.eq.1) then
          do jj=1,np
             read(11,2) pmin(jj)
