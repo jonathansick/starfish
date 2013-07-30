@@ -38,7 +38,7 @@ c
 c     calculate error on the pixsum.  Assume it's dominated by poisson noise
 c     of padd (the sum of pix) and nstars
          padd = pixsum(icmd)*dble(nstars)/dble(frac)
-         spsum(icmd) = padd**-1 + dble(nstars)**-1
+         spsum(icmd) = padd**(-1) + dble(nstars)**(-1)
       end do
 
  6    format(g14.7)
