@@ -66,7 +66,7 @@ c     read in the input file (specified on the command line as STDIN):
 
       lastnode = 1
       i = 1
-      open(unit=11,file=isofile,type="old")
+      open(unit=11,file=isofile,status="old")
  11   read(11,*,end=20) mass(i),(mag(j,i),j=1,nmag)
       color(i) = mag(j0-1,i) - mag(j0,i)
 
@@ -127,7 +127,7 @@ c     node, discard the weaker of the two.
       n = i - 1
 
 c     Write out eep points
-      open(unit=12,file=eepfile,type="unknown")
+      open(unit=12,file=eepfile,status="unknown")
       do i=1,n
 c         if ( inode(i).gt.0 ) then
             write(12,fstr(nmag)) mass(i),(mag(j,i),j=1,nmag),inode(i)
