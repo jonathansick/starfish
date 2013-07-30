@@ -14,9 +14,11 @@ C     (no longer using a 100-element search/replace array)
 C
       subroutine random(a,xl,xu)
 
-      double precision x,a,xl,xu
+      DOUBLE PRECISION x,a,xl,xu
+      DOUBLE PRECISION DPRAND
+      EXTERNAL DPRAND
 
-      x = dprand()
+      x = DPRAND()
       a = x*(xu - xl) + xl
 
       return
