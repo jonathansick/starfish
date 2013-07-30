@@ -1,6 +1,7 @@
 CC = gcc
-F77 = f77
+FC = gfortran
 CFLAGS = -c
+FCFLAGS = -std=legacy
 COMDIR = ../commoncode
 BINDIR = ../.
 GETEEP_OBJECTS = geteep.o 
@@ -10,18 +11,18 @@ COMMON_OBJECTS = parseline.o utilities.o
 all     : geteep interp
 
 geteep  : $(GETEEP_OBJECTS) $(COMMON_OBJECTS)
-	$(F77) -o geteep $(GETEEP_OBJECTS) $(COMMON_OBJECTS)
+	$(FC) -o geteep $(GETEEP_OBJECTS) $(COMMON_OBJECTS)
 	cp -f geteep $(BINDIR)
 
 interp  : $(INTERP_OBJECTS) $(COMMON_OBJECTS)
-	$(F77) -o interp $(INTERP_OBJECTS) $(COMMON_OBJECTS)
+	$(FC) -o interp $(INTERP_OBJECTS) $(COMMON_OBJECTS)
 	cp -f interp $(BINDIR)
 
 parseline.o : $(COMDIR)/parseline.c
 	$(CC) $(CFLAGS) $(COMDIR)/parseline.c
 
 utilities.o : $(COMDIR)/utilities.f
-	$(F77) $(CFLAGS) $(COMDIR)/utilities.f
+	$(FC) $(FCFLAGS) -c $(COMDIR)/utilities.f
 
 clean   :
 	rm $(GETEEP_OBJECTS) $(INTERP_OBJECTS) $(COMMON_OBJECTS)
