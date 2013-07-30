@@ -17,8 +17,8 @@ c
 C     dchi:  Finds the delta-chi**2 value corresponding to the 
 C     p confidence interval for any number of degrees of freedom.
 
-      parameter(JMAX=40)
       integer JMAX
+      parameter(JMAX=40)
       integer ndof,i,j,k
       real p,q,x1,x2,xacc
       real dchi,f,fmid,xmid
@@ -64,6 +64,8 @@ c     Return the complement of the incomplete gamma function,
 c     normalized such that as x -> inf, gamma_q -> 1
 c     (normalization accomplished by dividing by Gamma(a))
       double precision a, x
+      DOUBLE PRECISION DGAMI
+      EXTERNAL DGAMI
 
       gamma_q = 1.0 - dgami( a, x )/dgamma( a ) 
 
