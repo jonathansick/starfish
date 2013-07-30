@@ -51,7 +51,7 @@ c     somewhat constant for all pairs.
 c     Read in the bracketing isochrones
       i = 1
       i0 = 1
-      open(unit=11,file=afile,type="old")
+      open(unit=11,file=afile,status="old")
  11   read(11,*,end=12) mass(1,i),(mag(1,j,i),j=1,nmag),node1(i)
       if ( node1(i).gt.0 ) then
          inode1(i0) = i
@@ -65,7 +65,7 @@ c     Read in the bracketing isochrones
 
       i = 1
       i0 = 1
-      open(unit=12,file=bfile,type="old")
+      open(unit=12,file=bfile,status="old")
  13   read(12,*,end=14) mass(2,i),(mag(2,j,i),j=1,nmag),node2(i)
       if ( node2(i).gt.0 ) then
          inode2(i0) = i
@@ -77,7 +77,7 @@ c     Read in the bracketing isochrones
       niso2 = i - 1
       nn2 = i0 - 1
 
-      open(unit=13,file=outfile,type="unknown")
+      open(unit=13,file=outfile,status="unknown")
 
       o1 = 0
       o2 = 0
