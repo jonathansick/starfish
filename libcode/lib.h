@@ -15,5 +15,5 @@ c
       integer MMAG   ! maximum number of magnitudes present in each isoc [8]
       real TOL       ! tolerance parameter for SVDCMP routine [1.0e-24]
 
-      parameter(NISO=250,NPTS=100000,MAXDIM=20,MMAG=8)
+      parameter(NISO=2000,NPTS=100000,MAXDIM=20,MMAG=8)
       parameter(TOL=1.0e-24)

@@ -24,7 +24,7 @@ c
       integer NBINS  ! number of delta-mag bins in the error histograms [50]
       real PI        ! acos(-1.0)
       
-      parameter(MMAG=8,MCMD=7,NISOC=500,NISOS=100000,NAV=5000)
+      parameter(MMAG=8,MCMD=7,NISOC=2000,NISOS=100000,NAV=5000)
       parameter(MX=200,MY=600,BINX=10,BINY=52)
       parameter(MAXSTR=1000000,MINPOP=10,MAXPOP=20000,NBINS=50)
       parameter(PI=3.141592654)
