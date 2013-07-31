@@ -16,7 +16,7 @@ c
       integer i,n,ntot
       real av(NAV)
 
-      open(unit=4,file=avfile,type="old")
+      open(unit=4,file=avfile,status="old")
       n = 1
 
  20   read(4,*,end=30) av(n)
