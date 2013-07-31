@@ -9,6 +9,7 @@ The intent of this repository is to
 2. To make available a version of StarFISH with all modern
    patches integrated. A list of patches to StarFish 1.1 is
    available at http://www.noao.edu/staff/jharris/SFH/patches/index.html.
+3. Allow the StarFISH code to be compiled with modern gfortran compilers.
 
 No ownership is claimed by the maintainer of this repository (Jonathan Sick).
 
