@@ -1,7 +1,7 @@
 CC = gcc
 FC = gfortran
 CFLAGS = -c
-FCFLAGS = -std=legacy
+FCFLAGS = -std=legacy -O3
 COMDIR = ../commoncode
 BINDIR = ../.
 GETEEP_OBJECTS = geteep.o 

@@ -1,7 +1,7 @@
 CC = gcc
 FC = gfortran
 CFLAGS = -c
-FCFLAGS = -std=legacy
+FCFLAGS = -std=legacy -O3
 SYNTHDIR = ../synthcode
 COMDIR = ../commoncode
 OBJECTS = repop.o axes.o bin_dmags.o bin_interp.o bincombine.o \

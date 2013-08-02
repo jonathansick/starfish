@@ -1,12 +1,12 @@
 CC = gcc
 FC = gfortran
 CFLAGS = -c
-FCFLAGS = -std=legacy
+FCFLAGS = -std=legacy -O3
 COMDIR = ../commoncode
 BINDIR = ../.
 HEADER = synth.h
-DOBJECTS = synth.o axes.o bin_dmags.o bin_interp.o bincombine.o \
-crowd.o cumfcn.o delta_axes.o dmags.o fakecrowd.o mkcfn.o outpix.o \
+DOBJECTS = synth.o mkcfn.o axes.o bin_dmags.o bin_interp.o bincombine.o \
+crowd.o cumfcn.o delta_axes.o dmags.o fakecrowd.o outpix.o \
 pickphot.o readcrowd.o readphot.o redden.o scatter.o 
 OBJECTS = $(DOBJECTS) random.o parseline.o utilities.o
 
