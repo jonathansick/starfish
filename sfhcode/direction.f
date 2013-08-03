@@ -35,7 +35,7 @@ C
             ex(j) = ex(j)/r
          end do
       else
-         pause 'Warning: Null direction picked.  Selecting default' 
+         ! pause 'Warning: Null direction picked.  Selecting default' 
  
          ex(1) = 1.0D0
          do j=2,np
