@@ -14,4 +14,4 @@ c
       integer MCMD  ! max. number of CMDs [7]
       integer MBOX  ! max. number of boxes per CMD for chi**2 [3000]
 
-      parameter(MP=250,NDATA=500000,MCMD=7,MBOX=10000)
+      parameter(MP=400,NDATA=10000000,MCMD=7,MBOX=20000)
