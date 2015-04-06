@@ -4,6 +4,15 @@
 
 all: mklib synth sfh interp testchi repop/repop testpop/testpop
 
+clean:
+	rm **/*.o
+	rm geteep
+	rm interp
+	rm mklib
+	rm sfh
+	rm synth
+	rm testchi
+
 mklib:
 	$(MAKE) --directory=libcode
 synth:
